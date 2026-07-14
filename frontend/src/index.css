@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components; 
+@tailwind utilities;
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+body {
+  @apply bg-gray-100 text-gray-900 antialiased;
+}
+
+
+.nav-line-ltr {
+  position: relative;
+}
+.nav-line-ltr::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #059669; 
+  transition: width 0.3s ease-in-out;
+}
+.nav-line-ltr:hover::after {
+  width: 100%;
+}
+
+
+.nav-line-center {
+  position: relative;
+}
+.nav-line-center::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #059669; 
+  transform: translateX(-50%);
+  transition: width 0.3s ease-in-out;
+}
+.nav-line-center:hover::after {
+  width: 100%;
+}
+
+
+.nav-line-rtl {
+  position: relative;
+}
+.nav-line-rtl::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  right: 0;
+  background-color: #059669; 
+  transition: width 0.3s ease-in-out;
+}
+.nav-line-rtl:hover::after {
+  width: 100%;
+}
