@@ -475,4 +475,33 @@ router.patch("/:id/cancel", authenticateToken, async (req, res) => {
   }
 });
 
+const { generateOrderInvoicePdf } = require("../utils/pdfGenerator");
+
+// Генерація PDF рахунку-договору
+router.get("/:id/invoice", authenticateToken, async (req, res) => {
+  try {
+    const [orders] = await db.query(
+      req.user.role === 'admin'
+        ? "SELECT * FROM orders WHERE id = ?"
+        : "SELECT * FROM orders WHERE id = ? AND user_id = ?",
+      req.user.role === 'admin' ? [req.params.id] : [req.params.id, req.user.id]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({ error: "Замовлення не знайдено" });
+    }
+
+    const order = orders[0];
+    const [items] = await db.query("SELECT * FROM order_items WHERE order_id = ?", [order.id]);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=Invoice_Order_${order.order_number || order.id}.pdf`);
+
+    generateOrderInvoicePdf(order, items, res);
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    res.status(500).json({ error: "Помилка формування PDF рахунку" });
+  }
+});
+
 module.exports = router;
