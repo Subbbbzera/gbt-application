@@ -17,14 +17,62 @@ describe('Gold Bud Trans API Integration Tests', () => {
     });
   });
 
-  describe('GET /cards/available', () => {
-    it('повинен повертати список доступної спецтехніки', async () => {
+  describe('Cards API', () => {
+    it('GET /cards повинен повертати список усієї техніки з рейтингом', async () => {
+      const res = await request(app).get('/cards');
+      expect(res.statusCode).toEqual(200);
+      expect(Array.isArray(res.body)).toBeTruthy();
+      if (res.body.length > 0) {
+        expect(res.body[0]).toHaveProperty('title');
+        expect(res.body[0]).toHaveProperty('reviews_count');
+      }
+    });
+
+    it('GET /cards/available повинен повертати список доступної спецтехніки', async () => {
       const res = await request(app).get('/cards/available');
       expect(res.statusCode).toEqual(200);
       expect(Array.isArray(res.body)).toBeTruthy();
       expect(res.body.length).toBeGreaterThan(0);
       expect(res.body[0]).toHaveProperty('title');
       expect(res.body[0]).toHaveProperty('price_per_day');
+    });
+
+    it('GET /cards/:id повинен повертати 404 для неіснуючої картки', async () => {
+      const res = await request(app).get('/cards/999999');
+      expect(res.statusCode).toEqual(404);
+      expect(res.body).toHaveProperty('error');
+    });
+  });
+
+  describe('News API', () => {
+    it('GET /news повинен повертати список новин компанії', async () => {
+      const res = await request(app).get('/news');
+      expect(res.statusCode).toEqual(200);
+      expect(Array.isArray(res.body)).toBeTruthy();
+    });
+  });
+
+  describe('Slider API', () => {
+    it('GET /slider повинен повертати масив банерів слайдера', async () => {
+      const res = await request(app).get('/slider');
+      expect(res.statusCode).toEqual(200);
+      expect(Array.isArray(res.body)).toBeTruthy();
+    });
+  });
+
+  describe('Reviews API', () => {
+    it('GET /reviews/:cardId повинен повертати відгуки для техніки', async () => {
+      const res = await request(app).get('/reviews/1');
+      expect(res.statusCode).toEqual(200);
+      expect(Array.isArray(res.body)).toBeTruthy();
+    });
+
+    it('POST /reviews повинен валідувати обов\'язкові поля (card_id та text)', async () => {
+      const res = await request(app)
+        .post('/reviews')
+        .send({ text: '' });
+      expect(res.statusCode).toEqual(400);
+      expect(res.body).toHaveProperty('error');
     });
   });
 
@@ -51,13 +99,6 @@ describe('Gold Bud Trans API Integration Tests', () => {
         .post('/coupons/validate')
         .send({ code: 'NON_EXISTING_PROMO' });
       expect(res.statusCode).toEqual(404);
-    });
-  });
-
-  describe('PDF Invoice API', () => {
-    it('GET /orders/1/invoice повинен вимагати авторизацію (401)', async () => {
-      const res = await request(app).get('/orders/1/invoice');
-      expect(res.statusCode).toEqual(401);
     });
   });
 
@@ -90,6 +131,38 @@ describe('Gold Bud Trans API Integration Tests', () => {
         .post('/auth/register')
         .send({ username: 'missing_password' });
       expect(res.statusCode).toEqual(400);
+    });
+  });
+
+  describe('Protected Routes (Authentication Guard)', () => {
+    it('GET /orders/1/invoice повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).get('/orders/1/invoice');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('GET /cart повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).get('/cart');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /cart повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).post('/cart').send({ card_id: 1 });
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('GET /favorites повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).get('/favorites');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /favorites повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).post('/favorites').send({ card_id: 1 });
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('GET /orders повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).get('/orders');
+      expect(res.statusCode).toEqual(401);
     });
   });
 

@@ -1,76 +1,76 @@
 # Gold Bud Trans
 
-Веб-додаток для компанії **Gold Bud Trans**, яка займається орендою та продажем будівельної спецтехніки (екскаватори, автокрани, самоскиди, навантажувачі тощо).
+Web application for **Gold Bud Trans**, a company specializing in the rental and sale of heavy construction equipment and machinery (excavators, mobile cranes, dump trucks, loaders, etc.).
 
-Проєкт реалізовано як клієнт-серверний додаток (SPA на React + REST API на Express.js з базою даних MySQL).
-
----
-
-## Функціональні можливості
-
-### Для користувачів:
-- **Каталог техніки:** фільтрація за категоріями, типом угоди (оренда / купівля), перегляд детальних характеристик та фотогалереї.
-- **Оформлення замовлення:** вибір терміну оренди, автоматичний розрахунок вартості, застосування промокодів на знижку.
-- **Верифікація:** можливість прикріпити скан-копії документів (посвідчення водія / реєстраційні дані) для підтвердження оренди.
-- **Особистий кабінет:** історія замовлень, відстеження статусів (перевірка документів, очікування передплати, активна оренда), завантаження PDF-рахунку.
-- **Відгуки:** можливість залишати оцінки та коментарі до техніки з підтримкою відповідей.
-
-### Для адміністратора:
-- **Керування каталогом:** додавання, редагування, видалення техніки та контроль її доступності.
-- **Обробка замовлень:** перевірка завантажених документів клієнта, зміна статусів замовлення, облік передплати.
-- **Аналітика та статистика:** графіки доходів за місяцями (Chart.js), список популярної техніки, зведений звіт продажів з можливістю експорту в Excel (XLSX).
-- **Промокоди та контент:** генерація купонів зі знижками та лімітом використання, керування новинами сайту та слайдером головної сторінки.
-- **Сповіщення:** автоматичне інформування адміністратора про нові замовлення через Telegram-бота та дублювання на електронну пошту (Nodemailer).
+The project is implemented as a client-server web application (React Single Page Application + Express.js REST API with a MySQL database).
 
 ---
 
-## Технологічний стек
+## Features
+
+### For Users / Customers:
+- **Equipment Catalog:** Filter by category and deal type (rental / purchase), view detailed specifications and photo galleries.
+- **Order Placement:** Flexible rental period selection, automatic cost calculation, and promo code discounts.
+- **Verification:** Securely attach identity/driver license documents for rental verification.
+- **User Profile / Dashboard:** Order history, real-time status tracking (document verification, awaiting prepayment, active rental, completed), and PDF invoice download.
+- **Reviews & Ratings:** Leave feedback, ratings, and threaded replies for equipment.
+
+### For Administrators:
+- **Catalog Management:** Add, edit, delete equipment, upload image galleries, and toggle item availability.
+- **Order Processing:** Review customer identity documents, update order statuses, and track prepayments.
+- **Analytics & Statistics:** Monthly revenue charts (Chart.js), top popular equipment metrics, and summary sales reports with Excel (.xlsx) export.
+- **Promo Codes & Content:** Generate discount coupons with expiration dates and usage limits, manage company news and homepage slider banners.
+- **Notifications:** Automated alerts for new orders via Telegram Bot and email notifications (Nodemailer).
+
+---
+
+## Tech Stack
 
 - **Frontend:** React 19, Tailwind CSS, React Router 7, Chart.js, React Icons
 - **Backend:** Node.js, Express 5, JWT, Multer, Nodemailer, PDFKit, Helmet, express-rate-limit
-- **API Документація:** Swagger UI / OpenAPI 3.0
-- **База даних:** MySQL 8/9 (ACID-транзакції для оформлення замовлень)
-- **Тестування:** Jest, Supertest
-- **Контейнеризація:** Docker, Docker Compose
+- **API Documentation:** Swagger UI / OpenAPI 3.0
+- **Database:** MySQL 8/9 (ACID transactions for order processing)
+- **Testing:** Jest, Supertest
+- **Containerization:** Docker, Docker Compose
 
 ---
 
-## Швидкий запуск
+## Quick Start
 
-### Спосіб 1. Через Docker (рекомендовано)
-Усі сервіси (MySQL, Backend, Frontend) піднімаються однією командою:
+### Method 1: Using Docker Compose (Recommended)
+Launch all services (MySQL, Backend, Frontend) with a single command:
 
 ```bash
 docker compose up --build
 ```
 
-- Клієнтська частина: `http://localhost` (порт 80)
-- Серверна частина: `http://localhost:5000`
-- Документація API (Swagger): `http://localhost:5000/api-docs`
+- Frontend: `http://localhost` (Port 80)
+- Backend API: `http://localhost:5000`
+- Swagger API Documentation: `http://localhost:5000/api-docs`
 
-База даних і початкові дані (демо-техніка, купон, обліковий запис адміністратора) створюються автоматично.
+The database schema and initial seed data (demo equipment, coupons, default admin account) will be initialized automatically.
 
 ---
 
-### Спосіб 2. Локальний запуск через Node.js
+### Method 2: Local Setup with Node.js
 
-#### 1. База даних (MySQL)
-1. Переконайтеся, що служба MySQL запущена.
-2. Створіть базу даних `my_store` та імпортуйте структуру:
+#### 1. Database (MySQL)
+1. Ensure the MySQL service is running.
+2. Create the `my_store` database and import the schema:
    ```bash
    mysql -u root -p my_store < database_schema.sql
    ```
 
-#### 2. Серверна частина (Backend)
-1. Перейдіть до папки `backend`:
+#### 2. Backend API
+1. Navigate to the `backend` directory:
    ```bash
    cd backend
    ```
-2. Встановіть залежності:
+2. Install dependencies:
    ```bash
    npm install
    ```
-3. Створіть файл `.env` (за зразком `.env.example`) і вкажіть параметри підключення до вашої бази даних:
+3. Create a `.env` file (based on `.env.example`) and configure your database and environment settings:
    ```env
    PORT=5000
    DB_HOST=localhost
@@ -79,50 +79,52 @@ docker compose up --build
    DB_NAME=my_store
    JWT_SECRET=your_jwt_secret
    ```
-4. Запустіть сервер:
+4. Start the backend server:
    ```bash
    npm run dev
    ```
-   Сервер запуститься на `http://localhost:5000`. При першому запуску автоматично наповнюються демо-дані.
+   The server will start at `http://localhost:5000`. Initial demo data is seeded automatically on first startup.
 
-#### 3. Клієнтська частина (Frontend)
-1. У новому терміналі перейдіть до папки `frontend`:
+#### 3. Frontend Client
+1. In a new terminal window, navigate to the `frontend` directory:
    ```bash
    cd frontend
    ```
-2. Встановіть залежності та запустіть додаток:
+2. Install dependencies and start the React application:
    ```bash
    npm install
    npm start
    ```
-   Додаток відкриється за адресою `http://localhost:3000`.
+   The application will open at `http://localhost:3000`.
 
 ---
 
-## Документація API (Swagger)
+## API Documentation (Swagger)
 
-Після запуску бекенду інтерактивна документація всіх ендпоінтів доступна у браузері за посиланням:
+Once the backend is running, interactive API documentation is available in your browser at:
 `http://localhost:5000/api-docs`
 
-Тут можна протестувати маршрути авторизації, замовлень, каталогу та промокодів безпосередньо з інтерфейсу.
+You can test authentication endpoints, catalog queries, orders, and promo codes directly from the Swagger UI.
 
 ---
 
-## Тестування
+## Testing
 
-Для запуску інтеграційних тестів API:
+To run the automated test suite:
 
 ```bash
 cd backend
 npm test
 ```
 
-Тести перевіряють працездатність маршрутів авторизації, каталогу, промокодів та генерації рахунків за допомогою Jest і Supertest.
+The test suite includes:
+- **API Integration Tests** ([`api.test.js`](file:///E:/Fitcailo_Diplomna/backend/tests/api.test.js)): Checks server health, equipment catalog queries, news feed, slider banners, reviews validation, coupon application, user & admin authentication, and route security guards (unauthorized access prevention).
+- **Unit Tests** ([`pdfGenerator.test.js`](file:///E:/Fitcailo_Diplomna/backend/tests/pdfGenerator.test.js)): Verifies PDF invoice stream generation for rentals, purchases with applied discount coupons, and edge cases.
 
 ---
 
-## Тестовий обліковий запис адміністратора
+## Default Administrator Credentials
 
-Для перевірки панелі керування:
-- **Логін:** `admin`
-- **Пароль:** `admin123`
+To access the admin dashboard:
+- **Username:** `admin`
+- **Password:** `admin123`
