@@ -1,4 +1,4 @@
-const db = require("./db");
+﻿const db = require("../db");
 
 async function checkSchema() {
   try {
@@ -15,4 +15,5 @@ async function checkSchema() {
 }
 
 checkSchema();
+
 

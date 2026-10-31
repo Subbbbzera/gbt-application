@@ -4,9 +4,8 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "6f650fec6eb2a4748ae921cda6ff0546391aa2f34c9625aa27da3444798220f3cd125810ebf5553da711f7faeccd4be219dba7ae4f65db8b7835226dce72d19e"; 
+const JWT_SECRET = process.env.JWT_SECRET || "6f650fec6eb2a4748ae921cda6ff0546391aa2f34c9625aa27da3444798220f3cd125810ebf5553da711f7faeccd4be219dba7ae4f65db8b7835226dce72d19e";
 const SALT_ROUNDS = 10;
-
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -25,12 +24,18 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
+const isAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === "admin" || req.user.username === "admin")) {
+    next();
+  } else {
+    res.status(403).json({ error: "Доступ заборонено. Потрібні права адміністратора." });
+  }
+};
 
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    
     if (!username || !email || !password) {
       return res.status(400).json({ error: "Всі поля обов'язкові" });
     }
@@ -39,7 +44,6 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Пароль повинен містити принаймні 6 символів" });
     }
 
-    
     const [existingUsers] = await db.query(
       "SELECT id FROM users WHERE username = ? OR email = ?",
       [username, email]
@@ -49,18 +53,15 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Користувач з таким ім'ям або email вже існує" });
     }
 
-    
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    
     const [result] = await db.query(
       "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
       [username, email, hashedPassword]
     );
 
-    
     const token = jwt.sign(
-      { id: result.insertId, username, email },
+      { id: result.insertId, username, email, role: 'user' },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -68,12 +69,12 @@ router.post("/register", async (req, res) => {
     res.status(201).json({
       message: "Користувач успішно зареєстрований",
       token,
-      user: { 
-        id: result.insertId, 
-        username, 
-        email, 
-        email_notifications: 1, 
-        role: 'user' 
+      user: {
+        id: result.insertId,
+        username,
+        email,
+        email_notifications: 1,
+        role: 'user'
       }
     });
 
@@ -83,8 +84,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
-
 router.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -93,24 +92,8 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Всі поля обов'язкові" });
     }
 
-    
-    if (username === "admin" && password === "admin123") {
-      const token = jwt.sign(
-        { id: 0, username: "admin", email: "admin@example.com", role: "admin" }, 
-        JWT_SECRET, 
-        { expiresIn: "7d" }
-      );
-
-      return res.json({
-        message: "Авторизація як адмін успішна",
-        token,
-        user: { id: 0, username: "admin", email: "admin@example.com", role: "admin" }
-      });
-    }
-
-    
     const [users] = await db.query(
-      "SELECT id, username, email, password, role FROM users WHERE username = ? OR email = ?",
+      "SELECT id, username, email, password, role, email_notifications FROM users WHERE username = ? OR email = ?",
       [username, username]
     );
 
@@ -134,10 +117,10 @@ router.post("/login", async (req, res) => {
     res.json({
       message: "Авторизація успішна",
       token,
-      user: { 
-        id: user.id, 
-        username: user.username, 
-        email: user.email, 
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
         role: user.role,
         email_notifications: user.email_notifications
       }
@@ -149,20 +132,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
-
 router.get("/profile", authenticateToken, async (req, res) => {
   try {
     const [users] = await db.query(
-      "SELECT id, username, email, created_at, email_notifications FROM users WHERE id = ?",
+      "SELECT id, username, email, role, created_at, email_notifications FROM users WHERE id = ?",
       [req.user.id]
     );
 
     if (users.length === 0) {
-      
-      if (req.user.id === 0) {
-        return res.json({ id: 0, username: "admin", email: "admin@example.com", created_at: new Date(), email_notifications: 1 });
-      }
       return res.status(404).json({ error: "Користувача не знайдено" });
     }
 
@@ -173,15 +150,10 @@ router.get("/profile", authenticateToken, async (req, res) => {
   }
 });
 
-
 router.patch("/profile", authenticateToken, async (req, res) => {
   try {
     const { username, email, password, email_notifications } = req.body;
     const userId = req.user.id;
-
-    if (userId === 0) {
-      return res.status(403).json({ error: "Неможливо змінити дані хардкодного адміна" });
-    }
 
     let updateFields = [];
     let values = [];
@@ -213,11 +185,9 @@ router.patch("/profile", authenticateToken, async (req, res) => {
 
     await db.query(query, values);
 
-    
     const [users] = await db.query("SELECT id, username, email, role, email_notifications FROM users WHERE id = ?", [userId]);
     const updatedUser = users[0];
 
-    
     const token = jwt.sign(
       { id: updatedUser.id, username: updatedUser.username, email: updatedUser.email, role: updatedUser.role },
       JWT_SECRET,
@@ -239,7 +209,6 @@ router.patch("/profile", authenticateToken, async (req, res) => {
   }
 });
 
-
 router.get("/profile/coupons", authenticateToken, async (req, res) => {
   try {
     const [coupons] = await db.query(
@@ -253,9 +222,8 @@ router.get("/profile/coupons", authenticateToken, async (req, res) => {
   }
 });
 
-
 router.post("/logout", (req, res) => {
   res.json({ message: "Ви успішно вийшли з системи" });
 });
 
-module.exports = { router, authenticateToken };
+module.exports = { router, authenticateToken, isAdmin };

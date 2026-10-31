@@ -21,7 +21,6 @@ export const CartProvider = ({ children }) => {
   const [sliderImages, setSliderImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
   const [catalogFilters, setCatalogFilters] = useState({
     search: "",
     selectedCategories: [],
@@ -32,8 +31,6 @@ export const CartProvider = ({ children }) => {
     currentPage: 1
   });
 
-  
-
   useEffect(() => {
     fetchAvailableCards();
     fetchNewsPosts();
@@ -42,9 +39,11 @@ export const CartProvider = ({ children }) => {
       fetchUserCart();
       fetchUserOrders();
       fetchUserFavorites();
-      fetchCoupons(); 
+      if (user?.role === "admin" || user?.username === "admin") {
+        fetchCoupons();
+      }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
   const fetchSliderImages = async () => {
     try {
@@ -65,6 +64,7 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/slider`, {
         method: "POST",
+        headers: getAuthHeader(),
         body: formData,
       });
       if (response.ok) {
@@ -82,6 +82,7 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/slider/${id}`, {
         method: "DELETE",
+        headers: getAuthHeader(),
       });
       if (response.ok) {
         fetchSliderImages();
@@ -118,7 +119,7 @@ export const CartProvider = ({ children }) => {
         },
         body: JSON.stringify(couponData),
       });
-      
+
       if (response.ok) {
         fetchCoupons();
         return { success: true };
@@ -138,7 +139,7 @@ export const CartProvider = ({ children }) => {
         method: "DELETE",
         headers: getAuthHeader()
       });
-      
+
       if (response.ok) {
         fetchCoupons();
       }
@@ -156,7 +157,7 @@ export const CartProvider = ({ children }) => {
         },
         body: JSON.stringify({ code }),
       });
-      
+
       const data = await response.json();
       if (response.ok) {
         return { success: true, data };
@@ -311,9 +312,10 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/cards`, {
         method: "POST",
+        headers: getAuthHeader(),
         body: formData,
       });
-      
+
       if (response.ok) {
         fetchAvailableCards();
       }
@@ -326,8 +328,9 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/cards/${id}`, {
         method: "DELETE",
+        headers: getAuthHeader(),
       });
-      
+
       if (response.ok) {
         fetchAvailableCards();
       }
@@ -340,9 +343,10 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/cards/${id}`, {
         method: "PATCH",
+        headers: getAuthHeader(),
         body: formData,
       });
-      
+
       if (response.ok) {
         fetchAvailableCards();
         return { success: true };
@@ -361,11 +365,12 @@ export const CartProvider = ({ children }) => {
       const response = await fetch(`${API_URL}/news`, {
         method: "POST",
         headers: {
+          ...getAuthHeader(),
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newsData),
       });
-      
+
       if (response.ok) {
         fetchNewsPosts();
       }
@@ -378,8 +383,9 @@ export const CartProvider = ({ children }) => {
     try {
       const response = await fetch(`${API_URL}/news/${id}`, {
         method: "DELETE",
+        headers: getAuthHeader(),
       });
-      
+
       if (response.ok) {
         fetchNewsPosts();
       }
@@ -393,11 +399,12 @@ export const CartProvider = ({ children }) => {
       const response = await fetch(`${API_URL}/news/${id}`, {
         method: "PATCH",
         headers: {
+          ...getAuthHeader(),
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newsData),
       });
-      
+
       if (response.ok) {
         fetchNewsPosts();
         return { success: true };
@@ -410,18 +417,23 @@ export const CartProvider = ({ children }) => {
   };
 
   const addReview = async (cardId, text, rating = null, parentId = null) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/reviews`, {
         method: "POST",
         headers: {
+          ...getAuthHeader(),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
-          card_id: cardId, 
-          text, 
-          rating, 
+        body: JSON.stringify({
+          card_id: cardId,
+          text,
+          rating,
           parent_id: parentId,
-          user_id: user?.id || null 
         }),
       });
 
@@ -537,7 +549,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  
   const createOrder = async (orderData, orderedIds) => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -558,7 +569,6 @@ export const CartProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        
         const idsToClear = orderedIds || (isFormData ? [] : (orderData.items?.map(i => i.id) || orderData.card_ids || []));
         setCartItems(prev => prev.filter(item => !idsToClear.includes(item.id)));
         await fetchAvailableCards();
@@ -573,7 +583,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  
   const cancelOrder = async (orderId) => {
     if (!isAuthenticated) return { success: false, error: 'Необхідна авторизація' };
 
@@ -598,7 +607,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  
   const completeOrder = async (orderId) => {
     if (!isAuthenticated) return { success: false, error: 'Необхідна авторизація' };
 

@@ -1,4 +1,4 @@
-const db = require("./db");
+﻿const db = require("../db");
 
 async function migrate() {
   try {
@@ -11,12 +11,13 @@ async function migrate() {
       DEFAULT 'verification'
     `);
 
-    console.log("✅ Order statuses updated successfully");
+    console.log("вњ… Order statuses updated successfully");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Migration error:", error);
+    console.error("вќЊ Migration error:", error);
     process.exit(1);
   }
 }
 
 migrate();
+

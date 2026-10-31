@@ -1,4 +1,4 @@
-const db = require("./db");
+﻿const db = require("../db");
 
 async function migrate() {
   try {
@@ -12,12 +12,13 @@ async function migrate() {
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
       )
     `);
-    console.log("✅ Table order_documents created successfully");
+    console.log("вњ… Table order_documents created successfully");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Migration error:", error);
+    console.error("вќЊ Migration error:", error);
     process.exit(1);
   }
 }
 
 migrate();
+

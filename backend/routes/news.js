@@ -1,8 +1,7 @@
-
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-
+const { authenticateToken, isAdmin } = require("./auth");
 
 router.get("/", async (req, res) => {
   try {
@@ -13,22 +12,23 @@ router.get("/", async (req, res) => {
   }
 });
 
-
-router.post("/", async (req, res) => {
+router.post("/", authenticateToken, isAdmin, async (req, res) => {
   const { title, text, date } = req.body;
+  if (!title || !text) {
+    return res.status(400).json({ error: "Заголовок та текст обов'язкові" });
+  }
   try {
     const [result] = await db.query(
       "INSERT INTO news (title, text, date) VALUES (?, ?, ?)",
       [title, text, date]
     );
-    res.json({ id: result.insertId, title, text, date });
+    res.status(201).json({ id: result.insertId, title, text, date });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     await db.query("DELETE FROM news WHERE id = ?", [id]);
@@ -38,8 +38,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", authenticateToken, isAdmin, async (req, res) => {
   const { id } = req.params;
   const { title, text } = req.body;
   try {

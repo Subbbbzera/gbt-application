@@ -65,6 +65,12 @@ app.get("/health", (req, res) => {
 
 // Централізований обробник помилок
 app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({ error: "Розмір файлу перевищує ліміт 5 МБ" });
+  }
+  if (err.status === 400) {
+    return res.status(400).json({ error: err.message });
+  }
   console.error("❌ Неперехоплена помилка сервера:", err);
   res.status(err.status || 500).json({
     error: process.env.NODE_ENV === "production" ? "Внутрішня помилка сервера" : err.message

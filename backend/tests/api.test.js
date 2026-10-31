@@ -1,8 +1,21 @@
 const request = require('supertest');
 const app = require('../app');
 const db = require('../db');
+const seedData = require('../seed');
 
 describe('Gold Bud Trans API Integration Tests', () => {
+  let adminToken = '';
+
+  beforeAll(async () => {
+    await seedData();
+    const res = await request(app)
+      .post('/auth/login')
+      .send({
+        username: 'admin',
+        password: 'admin123'
+      });
+    adminToken = res.body.token;
+  });
 
   afterAll(async () => {
     // Закриваємо з'єднання з базою після завершення тестів
@@ -70,6 +83,7 @@ describe('Gold Bud Trans API Integration Tests', () => {
     it('POST /reviews повинен валідувати обов\'язкові поля (card_id та text)', async () => {
       const res = await request(app)
         .post('/reviews')
+        .set('Authorization', `Bearer ${adminToken}`)
         .send({ text: '' });
       expect(res.statusCode).toEqual(400);
       expect(res.body).toHaveProperty('error');
@@ -77,8 +91,10 @@ describe('Gold Bud Trans API Integration Tests', () => {
   });
 
   describe('Coupons API', () => {
-    it('GET /coupons повинен повертати список діючих промокодів', async () => {
-      const res = await request(app).get('/coupons');
+    it('GET /coupons повинен повертати список діючих промокодів для адміністратора', async () => {
+      const res = await request(app)
+        .get('/coupons')
+        .set('Authorization', `Bearer ${adminToken}`);
       expect(res.statusCode).toEqual(200);
       expect(Array.isArray(res.body)).toBeTruthy();
       const welcomeCoupon = res.body.find(c => c.code === 'WELCOME10');
@@ -103,7 +119,7 @@ describe('Gold Bud Trans API Integration Tests', () => {
   });
 
   describe('Auth API', () => {
-    it('POST /auth/login повинен успішно авторизувати адміністратора', async () => {
+    it('POST /auth/login повинен успішно авторизувати адміністратора з БД', async () => {
       const res = await request(app)
         .post('/auth/login')
         .send({
@@ -113,6 +129,7 @@ describe('Gold Bud Trans API Integration Tests', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('token');
       expect(res.body.user).toHaveProperty('role', 'admin');
+      expect(res.body.user.id).toBeGreaterThan(0);
     });
 
     it('POST /auth/login повинен повертати 400 при неправильному паролі', async () => {
@@ -134,7 +151,7 @@ describe('Gold Bud Trans API Integration Tests', () => {
     });
   });
 
-  describe('Protected Routes (Authentication Guard)', () => {
+  describe('Protected Routes (Authentication & RBAC Guard)', () => {
     it('GET /orders/1/invoice повинен вимагати авторизацію (401)', async () => {
       const res = await request(app).get('/orders/1/invoice');
       expect(res.statusCode).toEqual(401);
@@ -162,6 +179,36 @@ describe('Gold Bud Trans API Integration Tests', () => {
 
     it('GET /orders повинен вимагати авторизацію (401)', async () => {
       const res = await request(app).get('/orders');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /cards повинен вимагати авторизацію адміністратора (401)', async () => {
+      const res = await request(app).post('/cards').send({ title: 'Test' });
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /news повинен вимагати авторизацію адміністратора (401)', async () => {
+      const res = await request(app).post('/news').send({ title: 'Test', text: 'Test' });
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /slider повинен вимагати авторизацію адміністратора (401)', async () => {
+      const res = await request(app).post('/slider');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('GET /coupons повинен вимагати авторизацію адміністратора (401)', async () => {
+      const res = await request(app).get('/coupons');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /coupons/spin повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).post('/coupons/spin');
+      expect(res.statusCode).toEqual(401);
+    });
+
+    it('POST /reviews повинен вимагати авторизацію (401)', async () => {
+      const res = await request(app).post('/reviews').send({ card_id: 1, text: 'Test' });
       expect(res.statusCode).toEqual(401);
     });
   });
