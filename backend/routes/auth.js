@@ -4,8 +4,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || "6f650fec6eb2a4748ae921cda6ff0546391aa2f34c9625aa27da3444798220f3cd125810ebf5553da711f7faeccd4be219dba7ae4f65db8b7835226dce72d19e";
-const SALT_ROUNDS = 10;
+const JWT_SECRET = process.env.JWT_SECRET
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
