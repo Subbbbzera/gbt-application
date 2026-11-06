@@ -53,11 +53,9 @@ function Buy() {
   return (
     <div className="flex flex-col gap-8 max-w-[1440px] mx-auto px-4 md:px-8 py-10">
       <div className="flex gap-8">
-        {}
         <div className="w-1/4 h-fit bg-gray-50 border rounded-2xl p-4 flex-shrink-0 space-y-6 sticky top-28">
           <h3 className="text-xl font-bold text-emerald-900">Фільтр</h3>
           
-          {}
           <div>
             <label className="block text-sm font-medium mb-2">Пошук</label>
             <input
@@ -69,7 +67,6 @@ function Buy() {
             />
           </div>
 
-          {}
           <div>
             <h4 className="font-medium mb-2">Ціна (грн)</h4>
             <div className="space-y-2">
@@ -92,7 +89,6 @@ function Buy() {
             </div>
           </div>
 
-          {}
           <div>
             <h4 className="font-medium mb-2">Категорія</h4>
             <ul className="space-y-2 text-gray-700">
@@ -112,7 +108,6 @@ function Buy() {
             </ul>
           </div>
 
-          {}
           <button
             onClick={() => {
               setSearch("");
@@ -126,9 +121,7 @@ function Buy() {
           </button>
         </div>
 
-        {}
         <div className="w-3/4">
-          {}
           <div className="mb-6 flex justify-between items-center">
             <p className="text-gray-600">
               Знайдено: <span className="font-semibold">{filteredCards.length}</span>
@@ -163,7 +156,6 @@ function Buy() {
         </div>
       </div>
 
-      {}
       {totalPages > 1 && (
         <div className="flex justify-center gap-3 mt-6">
           <button

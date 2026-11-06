@@ -22,13 +22,11 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-white w-full overflow-x-hidden">
-      {}
       <DiscountWheel 
         isOpen={isWheelOpen} 
         onClose={() => setIsWheelOpen(false)} 
       />
 
-      {}
       <section className="relative h-auto flex flex-col justify-between bg-emerald-950 overflow-hidden text-white lg:min-h-[90vh] lg:flex-row lg:items-center lg:justify-start">
 
         <div className="absolute inset-0 z-0">
@@ -40,7 +38,6 @@ function Home() {
           />
         </div>
 
-        {}
         <div className="relative z-20 flex-1 flex flex-col justify-center px-5 pt-20 pb-6 sm:px-8 lg:max-w-7xl lg:mx-auto lg:w-full lg:px-12 lg:pt-0 lg:pb-0">
           <div className="lg:max-w-3xl" data-aos="fade-right">
             <h1 className="text-4xl font-black leading-[1.15] mb-4 sm:text-5xl lg:text-7xl lg:leading-[1.1] lg:mb-8">
@@ -54,7 +51,7 @@ function Home() {
             </p>
 
             <div className="flex flex-row gap-2 sm:gap-4 lg:gap-5" data-aos="fade-up" data-aos-delay="400">
-              <Link to="/Rent"
+              <Link to="/Catalog"
                 className="flex-1 sm:w-auto text-center px-3 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-500 active:scale-95 transition-all text-[11px] sm:text-sm shadow-lg shadow-emerald-900/30 lg:px-10 lg:py-4 lg:rounded-lg lg:shadow-xl lg:text-base whitespace-nowrap">
                 Каталог техніки
               </Link>
@@ -66,7 +63,6 @@ function Home() {
           </div>
         </div>
 
-        {}
         <div className="relative z-20 grid grid-cols-2 gap-px bg-white/8 border-t border-white/10 lg:hidden" data-aos="fade-up">
           {[
             { val: '500+', label: 'Одиниць парку' },
@@ -79,7 +75,6 @@ function Home() {
           ))}
         </div>
 
-        {}
         <div className="absolute bottom-0 left-0 w-full bg-black/20 backdrop-blur-md border-t border-white/5 py-6 hidden lg:block z-20" data-aos="slide-up">
           <div className="max-w-7xl mx-auto px-12 flex justify-between items-center text-sm font-medium tracking-wider uppercase text-emerald-100/60">
             {[['500+','Одиниць парку'],['15','Років досвіду'],['24/7','Техпідтримка'],['100%','Страхування']].map(([v,l],i,arr) => (
@@ -94,7 +89,6 @@ function Home() {
         </div>
       </section>
 
-      {}
       <section className="w-full py-12 px-5 sm:px-6 md:py-24">
         <div className="md:max-w-7xl md:mx-auto">
 
@@ -135,12 +129,10 @@ function Home() {
         </div>
       </section>
 
-      {}
       <section className="w-full py-12 px-5 bg-gray-50 border-y border-gray-100 sm:px-6 md:py-24 overflow-hidden">
         <div className="md:max-w-7xl md:mx-auto">
           <div className="flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:gap-20 lg:items-center">
 
-            {}
             <div className="w-full aspect-[16/9] rounded-2xl shadow-xl overflow-hidden sm:aspect-[4/3] lg:rounded-3xl" data-aos="fade-right">
               <Slider dots={false} infinite autoplay autoplaySpeed={4000} speed={800}
                 slidesToShow={1} slidesToScroll={1}>
@@ -161,7 +153,6 @@ function Home() {
               </Slider>
             </div>
 
-            {}
             <div data-aos="fade-left">
               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 md:mb-4">Наш автопарк</p>
               <h3 className="text-2xl font-black text-gray-900 leading-tight mb-3 sm:text-3xl md:text-5xl md:mb-8">
@@ -180,7 +171,7 @@ function Home() {
                 ))}
               </ul>
 
-              <Link to="/Rent"
+              <Link to="/Catalog"
                 className="inline-flex items-center px-7 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-900 active:scale-95 transition-all text-sm md:px-8 md:py-4 md:rounded-lg md:text-base">
                 Переглянути каталог
               </Link>
@@ -189,10 +180,8 @@ function Home() {
         </div>
       </section>
 
-    {}
 <section className="w-full py-12 px-5 sm:px-6 md:py-20 mb-9 bg-emerald-900 relative overflow-hidden">
 
-  {}
   <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500 opacity-5 rounded-full blur-3xl pointer-events-none" />
   <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-emerald-500 opacity-5 rounded-full blur-3xl pointer-events-none" />
 
@@ -225,7 +214,6 @@ function Home() {
   </div>
 </section>
 
-      {}
       <section className="w-full px-5 pb-12 sm:px-6 md:pb-24" data-aos="zoom-in-up">
         <div className="md:max-w-7xl md:mx-auto bg-emerald-800 rounded-2xl sm:rounded-3xl p-8 text-center relative overflow-hidden md:rounded-[3rem] md:p-12 lg:p-20 shadow-2xl">
           <div className="relative z-10">

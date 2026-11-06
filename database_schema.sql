@@ -1,5 +1,4 @@
 -- Database schema for my_store
--- Generated on 2026-07-07T10:39:48.412Z
 
 CREATE DATABASE IF NOT EXISTS `my_store`;
 USE `my_store`;
@@ -16,15 +15,13 @@ CREATE TABLE `cards` (
   `category` varchar(255) DEFAULT NULL,
   `characteristics` text DEFAULT NULL,
   `price_per_day` decimal(10,2) DEFAULT 500.00,
-  `deal_type` enum('rent','sale','both') DEFAULT 'rent',
-  `sale_price` decimal(10,2) DEFAULT NULL,
+  `price_buy` decimal(10,2) DEFAULT NULL,
+  `sale_type` enum('rent','buy','both') DEFAULT 'rent',
   `is_available` tinyint(1) DEFAULT 1,
   `image` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`image`)),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `sale_type` enum('rent','buy','both') DEFAULT 'rent',
-  `price_buy` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `coupons`
@@ -42,7 +39,7 @@ CREATE TABLE `coupons` (
   UNIQUE KEY `code` (`code`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `coupons_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `news`
@@ -55,7 +52,7 @@ CREATE TABLE `news` (
   `date` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `order_documents`
@@ -70,7 +67,7 @@ CREATE TABLE `order_documents` (
   PRIMARY KEY (`id`),
   KEY `order_id` (`order_id`),
   CONSTRAINT `order_documents_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `order_items`
@@ -91,7 +88,7 @@ CREATE TABLE `order_items` (
   KEY `card_id` (`card_id`),
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `orders`
@@ -117,7 +114,7 @@ CREATE TABLE `orders` (
   UNIQUE KEY `order_number` (`order_number`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `reviews`
@@ -138,7 +135,7 @@ CREATE TABLE `reviews` (
   CONSTRAINT `fk_reviews_parent` FOREIGN KEY (`parent_id`) REFERENCES `reviews` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `slider_images`
@@ -149,24 +146,7 @@ CREATE TABLE `slider_images` (
   `image_path` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- ------------------------------------------------------
--- Table structure for table `user_activity`
--- ------------------------------------------------------
-DROP TABLE IF EXISTS `user_activity`;
-CREATE TABLE `user_activity` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `card_id` int(11) NOT NULL,
-  `activity_type` varchar(50) DEFAULT 'click',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `card_id` (`card_id`),
-  CONSTRAINT `user_activity_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `user_activity_ibfk_2` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `user_cart`
@@ -182,7 +162,7 @@ CREATE TABLE `user_cart` (
   KEY `card_id` (`card_id`),
   CONSTRAINT `user_cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `user_cart_ibfk_2` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `user_favorites`
@@ -198,7 +178,7 @@ CREATE TABLE `user_favorites` (
   KEY `card_id` (`card_id`),
   CONSTRAINT `user_favorites_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `user_favorites_ibfk_2` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ------------------------------------------------------
 -- Table structure for table `users`
@@ -215,6 +195,6 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

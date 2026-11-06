@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import { FaArrowLeft, FaShoppingCart, FaHeart, FaStar, FaReply, FaChevronDown, FaChevronUp, FaTrash, FaEllipsisV, FaEdit, FaCheck, FaTimes } from "react-icons/fa";
+import { FaArrowLeft, FaHeart, FaStar, FaReply, FaChevronDown, FaChevronUp, FaTrash, FaEllipsisV, FaEdit, FaCheck } from "react-icons/fa";
 import Slider from "react-slick";
 
 function Detail() {
@@ -185,7 +185,7 @@ function Detail() {
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Товар не знайдено</h2>
           <button
-            onClick={() => navigate("/rent")}
+            onClick={() => navigate("/Catalog")}
             className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
           >
             Повернутися до каталогу
@@ -221,7 +221,7 @@ function Detail() {
 
   
   let imageList = [];
-  const API_URL = process.env.REACT_APP_API_URL || "";
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
   if (card.image) {
     try {
       const parsed = typeof card.image === 'string' && card.image.startsWith('[') ? JSON.parse(card.image) : card.image;
@@ -231,7 +231,7 @@ function Detail() {
     }
   }
 
-  const fullImages = imageList.map(img => img.startsWith('http') ? img : `${API_URL}${img}`);
+  const fullImages = imageList.map(img => (img.startsWith('http') || img.startsWith('/images')) ? img : `${API_URL}${img}`);
 
   
   const sliderSettings = {
@@ -250,7 +250,6 @@ function Detail() {
   return (
     <div className="min-h-screen bg-gray-100 py-7">
       <div className="max-w-7xl mx-auto">
-        {}
         <button
           onClick={() => navigate(-1)}
           className="flex items-center ml-4 gap-2 text-emerald-700 hover:text-emerald-800 font-medium mb-3 md:mb-6 transition"
@@ -261,7 +260,6 @@ function Detail() {
 
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
           <div className="grid md:grid-cols-2">
-            {}
             <div className="relative px-3 md:px-5 pt-5 md:pt-6 pb-1.5 md:py-1 bg-white border-b md:border-b-0  border-gray-100 overflow-hidden">
               {fullImages.length > 0 ? (
                 <div className="w-full relative group/slider rounded-t-2xl touch-pan-y overflow-hidden">
@@ -277,7 +275,6 @@ function Detail() {
                     ))}
                   </Slider>
 
-                  {}
                   {fullImages.length > 1 && (
                     <>
                       <div 
@@ -299,7 +296,6 @@ function Detail() {
                 </div>
               )}
               
-              {}
               {card.is_available === 0 && (
                 <div className="absolute top-12 right-12 px-4 py-2 bg-red-500 text-white rounded-lg font-semibold shadow-lg z-20">
                   В оренді
@@ -307,9 +303,7 @@ function Detail() {
               )}
             </div>
 
-            {}
             <div className="flex flex-col relative p-6 pr-14 md:p-12 md:pl-12">
-              {}
               <button
                 onClick={handleToggleFavorite}
                 className={`absolute top-3 right-3 md:top-8 md:right-12 p-3 rounded-full shadow-md transition-all duration-300 ${
@@ -331,7 +325,6 @@ function Detail() {
                 {card.title}
               </h1>
 
-              {}
               {cardReviews.length > 0 && (
                 <div className="flex items-center gap-2 mb-6 bg-emerald-50/50 w-fit px-3 py-1.5 rounded-lg border border-emerald-100">
                   <div className="flex items-center gap-1 text-yellow-400">
@@ -392,7 +385,6 @@ function Detail() {
                 )}
               </div>
 
-              {}
               <div className="mt-auto">
                 <button
                   onClick={handleRent}
@@ -415,7 +407,6 @@ function Detail() {
             </div>
           </div>
 
-          {}
           <div className="border-t border-gray-200 px-4 py-8 md:p-12 max-w-6xl mx-auto w-full">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -435,7 +426,6 @@ function Detail() {
 
             {showReviewsSection && (
               <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                {}
                 <div className="mb-8 flex flex-wrap items-center gap-3">
                   <span className="text-sm font-semibold text-gray-500 uppercase tracking-tight">Фільтр:</span>
                   <div className="flex gap-2">
@@ -464,7 +454,6 @@ function Detail() {
                   )}
                 </div>
 
-                {}
                 <div className="mb-8 bg-gray-50 p-5 rounded-xl border border-gray-100 shadow-sm">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">
                     Залишити відгук
@@ -491,7 +480,6 @@ function Detail() {
                   </button>
                 </div>
 
-                {}
                 {filteredReviews.length > 0 ? (
                   <div className="space-y-8">
                     {filteredReviews.map((rev) => {
@@ -501,7 +489,6 @@ function Detail() {
                       
                       return (
                         <div key={rev.id} className="relative group/main">
-                          {}
                           <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 relative z-10">
                             <div className="flex justify-between items-start mb-4">
                               <div className="flex flex-col gap-1.5">
@@ -602,7 +589,6 @@ function Detail() {
                                     {rev.text}
                                   </p>
                                   
-                                  {}
                                   <div className="md:hidden flex justify-end -mt-2 mb-2">
                                     <button
                                       onClick={() => setReplyTo(replyTo === rev.id ? null : rev.id)}
@@ -616,7 +602,6 @@ function Detail() {
                               )}
                             </div>
 
-                            {}
                             <div className="flex items-center gap-4 border-t border-gray-50 pt-4 mt-4">
                               {itemReplies.length > 0 && (
                                 <button
@@ -631,7 +616,6 @@ function Detail() {
                               )}
                             </div>
 
-                            {}
                             {replyTo === rev.id && (
                               <div className="mt-6 pl-4 border-l-4 border-emerald-500 bg-emerald-50/30 p-4 rounded-r-xl animate-in fade-in slide-in-from-left-2 duration-300">
                                 <h4 className="text-[10px] font-semibold text-emerald-700 uppercase tracking-tight mb-2">Ваша відповідь для {rev.username || "Анонім"}</h4>
@@ -660,15 +644,12 @@ function Detail() {
                             )}
                           </div>
 
-                          {}
                           {isExpanded && itemReplies.length > 0 && (
                             <div className="mt-3 space-y-3 pl-8 md:pl-12 relative">
-                              {}
                               <div className="absolute left-4 top-0 bottom-6 w-0.5 bg-gradient-to-b from-emerald-100 to-transparent md:left-6" />
                               
                               {itemReplies.map(reply => (
                                 <div key={reply.id} className="relative group/reply">
-                                  {}
                                   <div className="absolute -left-4 top-6 w-4 h-0.5 bg-emerald-100 md:-left-6 md:w-6" />
                                   
                                   <div className="bg-gray-50 border border-gray-100 p-4 rounded-xl hover:border-emerald-200 transition-colors relative">

@@ -9,7 +9,7 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const navigate = useNavigate();
   const { isAuthenticated, getAuthHeader, user } = useAuth();
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   const [cartItems, setCartItems] = useState([]);
   const [availableCards, setAvailableCards] = useState([]);
@@ -43,6 +43,7 @@ export const CartProvider = ({ children }) => {
         fetchCoupons();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user]);
 
   const fetchSliderImages = async () => {

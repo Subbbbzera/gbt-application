@@ -1,44 +1,55 @@
 const express = require("express");
 const db = require("../db");
 const { authenticateToken, isAdmin } = require("./auth");
-const multer = require("multer");
 const { sendEmail, sendTelegramMessage } = require("../utils/notifications");
 const { generateOrderInvoicePdf } = require("../utils/pdfGenerator");
-const path = require("path");
+const { uploadDocument } = require("../utils/upload");
 
 const router = express.Router();
 
-const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".pdf"];
-const ALLOWED_MIMETYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+/**
+ * Допоміжна функція для пакетного завантаження товарів та документів замовлень (усуває N+1 проблему)
+ */
+async function attachOrderDetails(orders, includeDocs = false) {
+  if (!orders || orders.length === 0) return [];
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "doc-" + uniqueSuffix + path.extname(file.originalname).toLowerCase());
-  },
-});
+  const orderIds = orders.map((o) => o.id);
+  const placeholders = orderIds.map(() => "?").join(",");
 
-const fileFilter = (req, file, cb) => {
-  const ext = path.extname(file.originalname).toLowerCase();
-  if (ALLOWED_EXTENSIONS.includes(ext) && ALLOWED_MIMETYPES.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    const error = new Error("Дозволені лише файли форматів: .jpg, .jpeg, .png, .webp, .pdf");
-    error.status = 400;
-    cb(error, false);
+  const [allItems] = await db.query(
+    `SELECT * FROM order_items WHERE order_id IN (${placeholders})`,
+    orderIds
+  );
+
+  const itemsByOrder = {};
+  for (const item of allItems) {
+    if (!itemsByOrder[item.order_id]) itemsByOrder[item.order_id] = [];
+    itemsByOrder[item.order_id].push(item);
   }
-};
 
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter,
-});
+  let docsByOrder = {};
+  if (includeDocs) {
+    const [allDocs] = await db.query(
+      `SELECT * FROM order_documents WHERE order_id IN (${placeholders})`,
+      orderIds
+    );
+    for (const doc of allDocs) {
+      if (!docsByOrder[doc.order_id]) docsByOrder[doc.order_id] = [];
+      docsByOrder[doc.order_id].push(doc);
+    }
+  }
 
-router.post("/", authenticateToken, upload.single("document"), async (req, res) => {
+  for (const order of orders) {
+    order.items = itemsByOrder[order.id] || [];
+    if (includeDocs) {
+      order.documents = docsByOrder[order.id] || [];
+    }
+  }
+
+  return orders;
+}
+
+router.post("/", authenticateToken, uploadDocument.single("document"), async (req, res) => {
   const connection = await db.getConnection();
 
   try {
@@ -81,10 +92,12 @@ router.post("/", authenticateToken, upload.single("document"), async (req, res) 
 
     await connection.beginTransaction();
 
+    // Блокуємо рядки FOR UPDATE для запобігання Race Condition
     const [dbItems] = await connection.execute(
       `SELECT id, title, price_per_day, price_buy, is_available
        FROM cards 
-       WHERE id IN (${card_ids.map(() => "?").join(",")})`,
+       WHERE id IN (${card_ids.map(() => "?").join(",")})
+       FOR UPDATE`,
       [...card_ids]
     );
 
@@ -130,7 +143,7 @@ router.post("/", authenticateToken, upload.single("document"), async (req, res) 
 
     if (coupon_code) {
       const [coupons] = await connection.execute(
-        "SELECT * FROM coupons WHERE code = ? AND used_count < usage_limit",
+        "SELECT * FROM coupons WHERE code = ? AND used_count < usage_limit FOR UPDATE",
         [coupon_code.toUpperCase()]
       );
       if (coupons.length > 0) {
@@ -276,7 +289,7 @@ router.patch("/admin/:orderId/approve-docs", authenticateToken, isAdmin, async (
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
           <h2 style="color: #059669;">Вітаємо, ${order.customer_name}!</h2>
           <p>Ваші документи за замовленням <b>#${order.order_number}</b> успішно перевірено та схвалено адміністратором.</p>
-          <p>Тепер ви можете внести завдаток у розмірі <b>${order.prepayment_amount} грн</b>, щоб активувати оренду техінки.</p>
+          <p>Тепер ви можете внести завдаток у розмірі <b>${order.prepayment_amount} грн</b>, щоб активувати оренду техніки.</p>
           <div style="margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL || "http://localhost:3000"}/orders" 
                style="background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">
@@ -363,13 +376,7 @@ router.get("/admin/all", authenticateToken, isAdmin, async (req, res) => {
       ORDER BY o.created_at DESC
     `);
 
-    for (let order of orders) {
-      const [items] = await db.query(`SELECT * FROM order_items WHERE order_id = ?`, [order.id]);
-      const [docs] = await db.query(`SELECT * FROM order_documents WHERE order_id = ?`, [order.id]);
-      order.items = items;
-      order.documents = docs;
-    }
-
+    await attachOrderDetails(orders, true);
     res.json(orders);
   } catch (error) {
     console.error("❌ Admin Orders Error:", error);
@@ -421,15 +428,49 @@ router.patch("/admin/:id/cancel", authenticateToken, isAdmin, async (req, res) =
   }
 });
 
+router.patch("/:id/complete", authenticateToken, async (req, res) => {
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+    const isAdminUser = req.user.role === "admin";
+    const [orders] = await connection.execute(
+      isAdminUser
+        ? "SELECT * FROM orders WHERE id = ?"
+        : "SELECT * FROM orders WHERE id = ? AND user_id = ?",
+      isAdminUser ? [req.params.id] : [req.params.id, req.user.id]
+    );
+
+    if (orders.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ error: "Замовлення не знайдено" });
+    }
+
+    await connection.execute('UPDATE orders SET status = "completed" WHERE id = ?', [
+      req.params.id,
+    ]);
+    await connection.execute(
+      `UPDATE cards SET is_available = 1 WHERE id IN (SELECT card_id FROM order_items WHERE order_id = ? AND type = 'rent')`,
+      [req.params.id]
+    );
+
+    await connection.commit();
+    res.json({ message: "Замовлення успішно завершено" });
+  } catch (error) {
+    await connection.rollback();
+    console.error("❌ Complete Order Error:", error);
+    res.status(500).json({ error: "Помилка завершення замовлення" });
+  } finally {
+    connection.release();
+  }
+});
+
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const [orders] = await db.query(`SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`, [
-      req.user.id,
-    ]);
-    for (let order of orders) {
-      const [items] = await db.query(`SELECT * FROM order_items WHERE order_id = ?`, [order.id]);
-      order.items = items;
-    }
+    const [orders] = await db.query(
+      `SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`,
+      [req.user.id]
+    );
+    await attachOrderDetails(orders, true);
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: "Помилка завантаження замовлень" });

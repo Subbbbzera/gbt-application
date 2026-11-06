@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import Card from '../components/Card';
 import { FaFilter, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -294,7 +294,6 @@ const Favorites = () => {
     <div className="flex flex-col gap-8 max-w-[1440px] mx-auto px-4 md:px-8 py-6 lg:py-10 pt-24 min-h-screen bg-gray-100">
 
 
-      {}
       <div className="flex lg:hidden justify-between items-center bg-white p-2 border rounded-xl shadow-sm">
         <p className="text-gray-600 text-sm">Улюблених: <b>{filteredCards.length}</b></p>
         <button 
@@ -307,12 +306,10 @@ const Favorites = () => {
       </div>
 
       <div className="flex gap-8">
-        {}
         <div className="hidden lg:block w-1/4 h-fit bg-white border border-emerald-100 rounded-2xl p-6 flex-shrink-0 space-y-6 sticky top-28 shadow-sm">
           <FilterFields />
         </div>
 
-        {}
         <div className={`fixed inset-0 z-[100] lg:hidden transition-opacity duration-300 ${isMobileFilterOpen ? "opacity-100 visible" : "opacity-0 pointer-events-none invisible"}`}>
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileFilterOpen(false)} />
           <div className={`absolute top-0 left-0 bottom-0 w-[80%] max-w-[320px] bg-white shadow-2xl p-6 overflow-y-auto space-y-6 transition-transform duration-300 ease-in-out ${isMobileFilterOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -320,7 +317,6 @@ const Favorites = () => {
           </div>
         </div>
 
-        {}
         <div className="w-full lg:w-3/4">
           <div className="hidden lg:flex mb-6 justify-between items-center">
 
@@ -357,7 +353,6 @@ const Favorites = () => {
             </div>
           )}
 
-          {}
           {totalPages > 1 && (
             <div className="flex justify-center gap-3 mt-10">
               <button

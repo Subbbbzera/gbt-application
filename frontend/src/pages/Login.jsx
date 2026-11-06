@@ -35,7 +35,6 @@ function Login() {
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-emerald-100 flex items-center justify-center py-12 px-4">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8">
-          {}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
               <FaSignInAlt className="text-3xl text-emerald-800" />
@@ -44,9 +43,7 @@ function Login() {
             <p className="text-gray-600 mt-2">Увійдіть у свій акаунт</p>
           </div>
 
-          {}
           <form onSubmit={handleSubmit} className="space-y-6">
-            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Ім'я користувача або Email
@@ -66,7 +63,6 @@ function Login() {
               </div>
             </div>
 
-            {}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Пароль
@@ -93,14 +89,12 @@ function Login() {
               </div>
             </div>
 
-            {}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
 
-            {}
             <button
               type="submit"
               disabled={loading}
@@ -124,14 +118,12 @@ function Login() {
             </button>
           </form>
 
-          {}
           <div className="mt-6 flex items-center">
             <div className="flex-1 border-t border-gray-300"></div>
             <span className="px-4 text-sm text-gray-500">або</span>
             <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          {}
           <div className="mt-6 text-center">
             <span className="text-gray-600">Немає акаунту? </span>
             <Link 

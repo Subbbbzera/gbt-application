@@ -56,7 +56,6 @@ function News() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {}
       <div className="bg-emerald-700 py-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center">
@@ -73,11 +72,9 @@ function News() {
         </div>
       </div>
 
-      {}
       <div className="bg-white border-b-2 border-gray-100 sticky top-[72px] z-40">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            {}
             <div className="relative w-full sm:w-96">
               <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -89,7 +86,6 @@ function News() {
               />
             </div>
 
-            {}
             <div className="flex items-center gap-2">
               <FaFilter className="text-gray-500" />
               <select
@@ -105,7 +101,6 @@ function News() {
         </div>
       </div>
 
-      {}
       <div className="max-w-7xl mx-auto px-6 py-12">
         {filteredAndSortedNews.length === 0 ? (
           <div className="text-center py-20">
@@ -121,7 +116,6 @@ function News() {
           </div>
         ) : (
           <>
-            {}
             <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-6 mb-8">
               <div className="flex flex-wrap gap-8 justify-center">
                 <div className="text-center">
@@ -138,32 +132,26 @@ function News() {
               </div>
             </div>
 
-            {}
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {filteredAndSortedNews.map((post, index) => (
                 <article
                   key={post.id}
                   className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden hover:border-emerald-300 transition-all duration-300 flex flex-col"
                 >
-                  {}
                   <div className="p-6 flex-grow">
-                    {}
                     <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
                       <FaCalendarAlt className="text-emerald-600" />
                       <time>{formatDate(post.date)}</time>
                     </div>
 
-                    {}
                     <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 line-clamp-2">
                       {post.title}
                     </h2>
 
-                    {}
                     <p className="text-sm md:text-base text-gray-600 line-clamp-3">
                       {truncateText(post.text, 120)}
                     </p>
 
-                    {}
                     {index === 0 && (
                       <div className="mt-4">
                         <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-sm font-semibold rounded-full">
@@ -173,7 +161,6 @@ function News() {
                     )}
                   </div>
 
-                  {}
                   <div className="px-6 pb-6">
                     <Link
                       to={`/news/${post.id}`}

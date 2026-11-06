@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes, FaSave } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaTimes } from "react-icons/fa";
 
 const AdminEditProduct = ({ product, onSave, onCancel }) => {
   const [title, setTitle] = useState(product.title || "");
@@ -139,14 +139,13 @@ const AdminEditProduct = ({ product, onSave, onCancel }) => {
                   className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 transition"
                 />
                 
-                {}
                 {product.image && (
                   <div className="mt-4">
                     <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Поточні фото (перша - головна):</p>
                     <div className="flex flex-wrap gap-2">
                       {(() => {
                         let currentImages = [];
-                        const API_URL = process.env.REACT_APP_API_URL || "";
+                        const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                         try {
                           const parsed = typeof product.image === 'string' && product.image.startsWith('[') ? JSON.parse(product.image) : product.image;
                           currentImages = Array.isArray(parsed) ? parsed : [parsed];
@@ -157,7 +156,7 @@ const AdminEditProduct = ({ product, onSave, onCancel }) => {
                         return currentImages.map((img, idx) => (
                           <div key={idx} className="relative w-16 h-16 rounded-lg overflow-hidden border">
                             <img 
-                              src={img.startsWith('http') ? img : `${API_URL}${img}`} 
+                              src={(img.startsWith('http') || img.startsWith('/images')) ? img : `${API_URL}${img}`} 
                               alt="preview" 
                               className="w-full h-full object-cover"
                             />

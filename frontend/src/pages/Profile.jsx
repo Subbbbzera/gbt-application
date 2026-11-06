@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FaUser, FaEnvelope, FaLock, FaSave, FaExclamationTriangle, FaShieldAlt, FaIdCard, FaGift, FaBell, FaComments, FaStar, FaChevronRight } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaExclamationTriangle, FaShieldAlt, FaIdCard, FaGift, FaBell, FaComments, FaStar, FaChevronRight } from "react-icons/fa";
 
 function Profile() {
   const { user, updateProfile } = useAuth();
@@ -30,6 +30,7 @@ function Profile() {
       setEmailNotifications(isEnabled);
       fetchUserData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchUserData = async () => {
@@ -100,7 +101,6 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      {}
       <div className="w-full md:w-80 bg-white border-r border-gray-200 flex flex-col pt-8">
         <div className="px-8 mb-8">
           <div className="flex items-center gap-4 mb-6">
@@ -156,7 +156,6 @@ function Profile() {
         </div>
       </div>
 
-      {}
       <div className="flex-1 p-4 md:p-12 lg:p-20 overflow-y-auto">
         <div className="max-w-4xl">
           {message.text && (
@@ -182,7 +181,6 @@ function Profile() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-12">
-            {}
             <section className={`transition-all duration-300 ${activeSection === "general" ? "opacity-100 translate-x-0" : "hidden opacity-0 -translate-x-4"}`}>
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Загальна інформація</h2>
@@ -190,7 +188,6 @@ function Profile() {
               </div>
 
               <div className="space-y-8">
-                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase text-gray-400 ml-1">Публічне ім'я</label>
@@ -223,7 +220,6 @@ function Profile() {
                   </div>
                 </div>
 
-                {}
                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
@@ -258,7 +254,6 @@ function Profile() {
                   </div>
                 </div>
 
-                {}
                 <div className="space-y-6 pt-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
@@ -308,7 +303,6 @@ function Profile() {
               </div>
             </section>
 
-            {}
             <section className={`transition-all duration-300 ${activeSection === "security" ? "opacity-100 translate-x-0" : "hidden opacity-0 -translate-x-4"}`}>
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Безпека акаунта</h2>
@@ -357,7 +351,6 @@ function Profile() {
               </div>
             </section>
 
-            {}
             <section className={`transition-all duration-300 ${activeSection === "reviews" ? "opacity-100 translate-x-0" : "hidden opacity-0 -translate-x-4"}`}>
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Історія коментарів</h2>
@@ -435,7 +428,6 @@ function Profile() {
               </div>
             </section>
 
-            {}
             {(activeSection === "general" || activeSection === "security") && (
               <div className="flex items-center justify-start gap-4">
                 <button

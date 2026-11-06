@@ -1,12 +1,11 @@
 import React, { useContext, useState } from "react";
 import * as XLSX from "xlsx";
-import Card from "../components/Card";
 import { CartContext } from "../context/CartContext";
 import AdminDashboard from "../components/AdminDashboard";
 import AdminOrders from "../components/AdminOrders";
 import AdminEditProduct from "../components/AdminEditProduct";
 import AdminEditNews from "../components/AdminEditNews";
-import { FaChartBar, FaPlusCircle, FaNewspaper, FaListUl, FaShoppingBag, FaEdit, FaFileExcel, FaChevronDown, FaChevronUp, FaSearch } from "react-icons/fa";
+import { FaPlusCircle, FaNewspaper, FaShoppingBag, FaEdit, FaFileExcel } from "react-icons/fa";
 
 function Admin() {
   const {
@@ -299,7 +298,6 @@ function Admin() {
     <div className="max-w-6xl mx-auto p-8 bg-gray-50 min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-end mb-8 gap-4">
 
-        {}
         <div className="flex bg-white rounded-lg border p-1">
           <button
             onClick={() => setActiveTab("dashboard")}
@@ -334,7 +332,6 @@ function Admin() {
         <AdminOrders />
       ) : (
         <div className="space-y-12 animate-fadeIn">
-          {}
           <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
               <FaFileExcel className="text-emerald-600" />
@@ -382,7 +379,6 @@ function Admin() {
             </button>
           </div>
 
-          {}
           <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
               <FaPlusCircle className="text-emerald-500" />
@@ -512,7 +508,6 @@ function Admin() {
             </button>
           </div>
 
-          {}
           <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
               <FaNewspaper className="text-emerald-500" />
@@ -539,7 +534,6 @@ function Admin() {
             </button>
           </div>
 
-          {}
           <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
               <FaPlusCircle className="text-purple-500" />
@@ -622,7 +616,6 @@ function Admin() {
             </div>
           </div>
 
-          {}
           <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-800">
               <FaShoppingBag className="text-emerald-500" />
@@ -668,22 +661,21 @@ function Admin() {
             </div>
           </div>
 
-          {}
           <div>
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Активний автопарк</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {availableCards.map((c) => {
                 let displayImage = null;
-                const API_URL = process.env.REACT_APP_API_URL || "";
+                const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                 if (c.image) {
                   try {
                     const parsed = typeof c.image === 'string' && c.image.startsWith('[') ? JSON.parse(c.image) : c.image;
                     const imagePath = Array.isArray(parsed) ? parsed[0] : parsed;
                     if (imagePath) {
-                      displayImage = imagePath.startsWith('http') ? imagePath : `${API_URL}${imagePath}`;
+                      displayImage = (imagePath.startsWith('http') || imagePath.startsWith('/images')) ? imagePath : `${API_URL}${imagePath}`;
                     }
                   } catch (e) {
-                    displayImage = c.image.startsWith('http') ? c.image : `${API_URL}${c.image}`;
+                    displayImage = (c.image.startsWith('http') || c.image.startsWith('/images')) ? c.image : `${API_URL}${c.image}`;
                   }
                 }
 
@@ -753,7 +745,6 @@ function Admin() {
             </div>
           </div>
 
-          {}
           <div className="mt-8 pb-12">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">Опубліковані новини</h2>
             <div className="grid grid-cols-1 gap-4">

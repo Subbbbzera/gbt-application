@@ -1,22 +1,11 @@
 const express = require("express");
 const db = require("../db");
-const { authenticateToken } = require("./auth");
+const { authenticateToken, isAdmin } = require("./auth");
 
 const router = express.Router();
 
-
-const isAdmin = (req, res, next) => {
-  if (req.user && (req.user.role === "admin" || req.user.username === "admin")) {
-    next();
-  } else {
-    res.status(403).json({ error: "Доступ заборонено. Потрібні права адміністратора." });
-  }
-};
-
-
 router.get("/income", authenticateToken, isAdmin, async (req, res) => {
   try {
-    
     const [rows] = await db.query(`
       SELECT 
         DATE_FORMAT(created_at, '%Y-%m') as month, 
@@ -31,7 +20,6 @@ router.get("/income", authenticateToken, isAdmin, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 router.get("/popular", authenticateToken, isAdmin, async (req, res) => {
   try {
@@ -51,7 +39,6 @@ router.get("/popular", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-
 router.get("/orders-monthly", authenticateToken, isAdmin, async (req, res) => {
   try {
     const [rows] = await db.query(`
@@ -69,7 +56,6 @@ router.get("/orders-monthly", authenticateToken, isAdmin, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 router.get("/users", authenticateToken, isAdmin, async (req, res) => {
   try {
@@ -94,16 +80,15 @@ router.get("/users", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-
 router.get("/sales-report", authenticateToken, isAdmin, async (req, res) => {
   const { from, to } = req.query;
-  
-  try {
-    
-    const startDate = from ? `${from} 00:00:00` : '1970-01-01 00:00:00';
-    const endDate = to ? `${to} 23:59:59` : '2099-12-31 23:59:59';
 
-    const [rows] = await db.query(`
+  try {
+    const startDate = from ? `${from} 00:00:00` : "1970-01-01 00:00:00";
+    const endDate = to ? `${to} 23:59:59` : "2099-12-31 23:59:59";
+
+    const [rows] = await db.query(
+      `
       SELECT 
         oi.card_title as title, 
         COUNT(*) as count, 
@@ -113,8 +98,10 @@ router.get("/sales-report", authenticateToken, isAdmin, async (req, res) => {
       WHERE o.created_at BETWEEN ? AND ?
       GROUP BY oi.card_id, oi.card_title
       ORDER BY count DESC
-    `, [startDate, endDate]);
-    
+    `,
+      [startDate, endDate]
+    );
+
     res.json(rows);
   } catch (error) {
     console.error("Error fetching sales report:", error);
@@ -122,15 +109,12 @@ router.get("/sales-report", authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-
 router.get("/summary", authenticateToken, isAdmin, async (req, res) => {
   try {
-    
     const [ordersSum] = await db.query(`
       SELECT SUM(total_amount) as total FROM orders WHERE status != 'cancelled'
     `);
 
-    
     const [activeItemsCount] = await db.query(`
       SELECT COUNT(*) as count 
       FROM order_items oi
@@ -138,7 +122,6 @@ router.get("/summary", authenticateToken, isAdmin, async (req, res) => {
       WHERE o.status != 'cancelled'
     `);
 
-    
     const [catalogCount] = await db.query(`
       SELECT COUNT(*) as count FROM cards WHERE is_available = 1
     `);
@@ -146,7 +129,7 @@ router.get("/summary", authenticateToken, isAdmin, async (req, res) => {
     res.json({
       activeOrdersTotal: ordersSum[0].total || 0,
       activeItemsCount: activeItemsCount[0].count || 0,
-      catalogCount: catalogCount[0].count || 0
+      catalogCount: catalogCount[0].count || 0,
     });
   } catch (error) {
     console.error("Error fetching summary stats:", error);

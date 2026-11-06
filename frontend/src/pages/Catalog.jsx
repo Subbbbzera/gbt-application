@@ -20,11 +20,9 @@ function Catalog() {
 
   
   const allRentPrices = availableCards.map(c => parseFloat(c.price_per_day)).filter(p => !isNaN(p) && p > 0);
-  const absoluteMinRent = 0;
   const absoluteMaxRent = allRentPrices.length ? Math.max(...allRentPrices) : 10000;
 
   const allBuyPrices = availableCards.map(c => parseFloat(c.price_buy)).filter(p => !isNaN(p) && p > 0);
-  const absoluteMinBuy = 0;
   const absoluteMaxBuy = allBuyPrices.length ? Math.max(...allBuyPrices) : 1000000;
 
   const toggleSection = (section) => {
@@ -67,12 +65,10 @@ function Catalog() {
 
     const rentPrice = parseFloat(card.price_per_day) || 0;
     const minRent = parseFloat(rentPriceRange.min) || 0;
-    const maxRent = parseFloat(rentPriceRange.max) || Infinity;
     const matchRentPrice = rentPrice >= minRent && rentPrice <= (rentPriceRange.max || Infinity);
 
     const buyPrice = parseFloat(card.price_buy) || 0;
     const minBuy = parseFloat(buyPriceRange.min) || 0;
-    const maxBuy = parseFloat(buyPriceRange.max) || Infinity;
     const matchBuyPrice = buyPrice >= minBuy && buyPrice <= (buyPriceRange.max || Infinity);
     
     return matchSearch && matchCategory && matchSaleType && matchRentPrice && matchBuyPrice;
@@ -145,7 +141,6 @@ function Catalog() {
         </button>
       </div>
       
-      {}
       <div>
         <label className="block text-sm font-medium mb-2">Пошук</label>
         <input
@@ -157,7 +152,6 @@ function Catalog() {
         />
       </div>
 
-      {}
       <div className="relative">
         <h4 className="font-bold text-gray-800 mb-2">Сортувати</h4>
         <button
@@ -185,7 +179,6 @@ function Catalog() {
         )}
       </div>
 
-      {}
       <div className="border-b pb-4">
         <button 
           onClick={() => toggleSection('saleType')}
@@ -212,7 +205,6 @@ function Catalog() {
         )}
       </div>
 
-      {}
       <div className="border-b pb-4">
         <button 
           onClick={() => toggleSection('categories')}
@@ -238,7 +230,6 @@ function Catalog() {
         )}
       </div>
 
-      {}
       <div className="space-y-4">
         <h4 className="font-bold text-gray-800">Ціна оренди</h4>
         <div className="flex justify-between items-center mb-2">
@@ -261,7 +252,6 @@ function Catalog() {
         />
       </div>
 
-      {}
       <div className="space-y-4">
         <h4 className="font-bold text-gray-800">Ціна покупки</h4>
         <div className="flex justify-between items-center mb-2">
@@ -284,7 +274,6 @@ function Catalog() {
         />
       </div>
 
-      {}
       <button
         onClick={() => {
           setCatalogFilters({
@@ -293,6 +282,7 @@ function Catalog() {
             saleTypeFilter: "all",
             rentPriceRange: { min: "", max: "" },
             buyPriceRange: { min: "", max: "" },
+            sortBy: "newest",
             currentPage: 1
           });
         }}
@@ -301,7 +291,6 @@ function Catalog() {
         Скинути фільтри
       </button>
 
-      {}
       <button
         onClick={() => setIsMobileFilterOpen(false)}
         className="lg:hidden w-full py-3 bg-emerald-600 text-white rounded-lg font-bold mt-4"
@@ -314,7 +303,6 @@ function Catalog() {
   return (
     <div className="flex flex-col gap-8 max-w-[1440px] mx-auto px-4 md:px-8 py-6 lg:py-10">
       
-      {}
       <div className="flex lg:hidden justify-between items-center bg-white p-2 border rounded-xl shadow-sm">
         <p className="text-gray-600 text-sm">Знайдено: <b>{filteredCards.length}</b></p>
         <button 
@@ -327,24 +315,20 @@ function Catalog() {
       </div>
 
       <div className="flex gap-8">
-        {}
         <div className="hidden lg:block w-1/4 h-fit bg-gray-50 border rounded-2xl p-4 flex-shrink-0 space-y-6 sticky top-28">
           <FilterFields />
         </div>
 
-        {}
         <div 
           className={`fixed inset-0 z-[100] lg:hidden transition-opacity duration-300 ${
             isMobileFilterOpen ? "opacity-100 visible" : "opacity-0 pointer-events-none invisible"
           }`}
         >
-          {}
           <div 
             className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
             onClick={() => setIsMobileFilterOpen(false)} 
           />
           
-          {}
           <div 
             className={`absolute top-0 left-0 bottom-0 w-[80%] max-w-[320px] bg-white shadow-2xl p-6 overflow-y-auto space-y-6 transition-transform duration-300 ease-in-out ${
               isMobileFilterOpen ? "translate-x-0" : "-translate-x-full"
@@ -354,7 +338,6 @@ function Catalog() {
           </div>
         </div>
 
-        {}
         <div className="w-full lg:w-3/4">
           <div className="hidden lg:flex mb-6 justify-between items-center">
             <p className="text-gray-600">
@@ -388,7 +371,6 @@ function Catalog() {
         </div>
       </div>
 
-      {}
       {totalPages > 1 && (
         <div className="flex justify-center gap-3 mt-6">
           <button

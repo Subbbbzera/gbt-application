@@ -4,19 +4,20 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET
+const JWT_SECRET = process.env.JWT_SECRET;
+const SALT_ROUNDS = 10;
 
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ error: 'Access token required' });
+    return res.status(401).json({ error: "Access token required" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ error: 'Invalid token' });
+      return res.status(403).json({ error: "Invalid token" });
     }
     req.user = user;
     next();
@@ -24,7 +25,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
-  if (req.user && (req.user.role === "admin" || req.user.username === "admin")) {
+  if (req.user && req.user.role === "admin") {
     next();
   } else {
     res.status(403).json({ error: "Доступ заборонено. Потрібні права адміністратора." });
@@ -60,9 +61,9 @@ router.post("/register", async (req, res) => {
     );
 
     const token = jwt.sign(
-      { id: result.insertId, username, email, role: 'user' },
+      { id: result.insertId, username, email, role: "user" },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: "7d" }
     );
 
     res.status(201).json({
@@ -73,10 +74,9 @@ router.post("/register", async (req, res) => {
         username,
         email,
         email_notifications: 1,
-        role: 'user'
-      }
+        role: "user",
+      },
     });
-
   } catch (err) {
     console.error("Помилка реєстрації:", err);
     res.status(500).json({ error: "Внутрішня помилка сервера" });
@@ -121,10 +121,9 @@ router.post("/login", async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        email_notifications: user.email_notifications
-      }
+        email_notifications: user.email_notifications,
+      },
     });
-
   } catch (err) {
     console.error("Помилка авторизації:", err);
     res.status(500).json({ error: "Внутрішня помилка сервера" });
@@ -154,8 +153,8 @@ router.patch("/profile", authenticateToken, async (req, res) => {
     const { username, email, password, email_notifications } = req.body;
     const userId = req.user.id;
 
-    let updateFields = [];
-    let values = [];
+    const updateFields = [];
+    const values = [];
 
     if (username) {
       updateFields.push("username = ?");
@@ -166,6 +165,9 @@ router.patch("/profile", authenticateToken, async (req, res) => {
       values.push(email);
     }
     if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ error: "Пароль повинен містити принаймні 6 символів" });
+      }
       const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
       updateFields.push("password = ?");
       values.push(hashedPassword);
@@ -184,11 +186,19 @@ router.patch("/profile", authenticateToken, async (req, res) => {
 
     await db.query(query, values);
 
-    const [users] = await db.query("SELECT id, username, email, role, email_notifications FROM users WHERE id = ?", [userId]);
+    const [users] = await db.query(
+      "SELECT id, username, email, role, email_notifications FROM users WHERE id = ?",
+      [userId]
+    );
     const updatedUser = users[0];
 
     const token = jwt.sign(
-      { id: updatedUser.id, username: updatedUser.username, email: updatedUser.email, role: updatedUser.role },
+      {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -196,12 +206,11 @@ router.patch("/profile", authenticateToken, async (req, res) => {
     res.json({
       message: "Профіль успішно оновлено",
       token,
-      user: updatedUser
+      user: updatedUser,
     });
-
   } catch (err) {
     console.error("Помилка оновлення профілю:", err);
-    if (err.code === 'ER_DUP_ENTRY') {
+    if (err.code === "ER_DUP_ENTRY") {
       return res.status(400).json({ error: "Це ім'я або email вже зайняті" });
     }
     res.status(500).json({ error: "Внутрішня помилка сервера" });

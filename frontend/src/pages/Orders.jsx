@@ -39,7 +39,7 @@ function Orders() {
     } else {
       fetchUserOrders();
     }
-  }, [isAuthenticated, fetchUserOrders]);
+  }, [isAuthenticated, fetchUserOrders, navigate]);
 
   
   const filteredOrders = orders.filter(order => {
@@ -155,7 +155,6 @@ function Orders() {
       <div id="liqpay_checkout"></div>
       <div className="max-w-6xl mx-auto px-4">
 
-        {}
         {successMessage && (
           <div className="mb-6 p-4 bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center justify-between animate-fadeIn">
             <span className="font-bold">{successMessage}</span>
@@ -165,7 +164,6 @@ function Orders() {
           </div>
         )}
         
-        {}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Мої замовлення</h1>
           
@@ -223,10 +221,10 @@ function Orders() {
             </p>
             {orders.length === 0 && (
               <button
-                onClick={() => navigate("/Rent")}
+                onClick={() => navigate("/Catalog")}
                 className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
               >
-                Перейти до оренди
+                Перейти до каталогу
               </button>
             )}
           </div>
@@ -234,7 +232,6 @@ function Orders() {
           <div className="space-y-6">
             {filteredOrders.map((order) => (
               <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
-                {}
                 <div className="bg-emerald-50 p-4 border-b flex justify-between items-center flex-wrap gap-4">
                   <div>
                     <h3 className="font-bold text-lg text-emerald-800">
@@ -256,10 +253,8 @@ function Orders() {
                   </span>
                 </div>
 
-                {}
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    {}
                     <div className="bg-gray-50 p-4 rounded-xl">
                       <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                         <FaCalendar className="text-emerald-600" />
@@ -277,7 +272,6 @@ function Orders() {
                       </div>
                     </div>
 
-                    {}
                     <div className="bg-gray-50 p-4 rounded-xl">
                       <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                         <FaPhone className="text-emerald-600" />
@@ -297,7 +291,6 @@ function Orders() {
                       </div>
                     </div>
 
-                    {}
                     <div className="bg-gray-50 p-4 rounded-xl">
                       <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                         <FaMapMarkerAlt className="text-emerald-600" />
@@ -332,7 +325,6 @@ function Orders() {
                     </div>
                   </div>
 
-                  {}
                   <div className="border rounded-xl overflow-hidden mb-6">
                     <table className="w-full text-left text-sm">
                       <thead className="bg-gray-50 border-b">
@@ -361,7 +353,6 @@ function Orders() {
                     </table>
                   </div>
 
-                  {}
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t">
                     <div className="flex-1">
                       {order.notes && (

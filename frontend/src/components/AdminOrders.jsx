@@ -172,7 +172,6 @@ const AdminOrders = () => {
           Керування замовленнями
         </h2>
         
-        {}
         <div className="flex flex-wrap items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
           <div className="relative">
             <input
@@ -243,7 +242,6 @@ const AdminOrders = () => {
                   </div>
                   
                   <div className="flex flex-wrap gap-2">
-                    {}
                     {order.status === 'verification' && (
                       <button 
                         onClick={() => handleApproveRequest(order.id)}
@@ -268,7 +266,6 @@ const AdminOrders = () => {
                       </span>
                     )}
 
-                    {}
                     {order.status !== 'completed' && order.status !== 'cancelled' && (
                       <button 
                         onClick={() => handleCancel(order.id)}
@@ -325,7 +322,6 @@ const AdminOrders = () => {
                   </div>
                 </div>
 
-                {}
                 {order.documents && order.documents.length > 0 && (
                   <div className="mb-6 p-4 bg-emerald-50/30 rounded-xl border border-emerald-100/50">
                     <h4 className="text-xs font-bold text-emerald-600/70 uppercase tracking-wider mb-3 flex items-center gap-2">

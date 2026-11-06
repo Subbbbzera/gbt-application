@@ -1,6 +1,6 @@
 import React from 'react';
 import { 
-  FaRegFileAlt, FaBalanceScale, FaHandshake, FaShieldAlt, 
+  FaRegFileAlt, FaBalanceScale, FaShieldAlt, 
   FaInfoCircle, FaCheck, FaBuilding, FaUser 
 } from 'react-icons/fa';
 
@@ -16,7 +16,6 @@ const SectionHeader = ({ icon: Icon, title }) => (
 function UmovRent() {
   return (
     <div className="bg-white min-h-screen">
-      {}
       <div className="bg-emerald-900 text-white py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">
@@ -29,7 +28,6 @@ function UmovRent() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-16">
-        {}
         <div className="mb-16 p-6 bg-gray-50 border-l-4 border-emerald-600 rounded-r-lg shadow-sm">
           <div className="flex gap-4">
             <FaInfoCircle className="text-emerald-600 text-2xl flex-shrink-0 mt-1" />
@@ -42,7 +40,6 @@ function UmovRent() {
           </div>
         </div>
 
-        {}
         <section className="mb-16">
           <SectionHeader icon={FaBalanceScale} title="Загальні положення та умови" />
           <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
@@ -81,11 +78,9 @@ function UmovRent() {
           </div>
         </section>
 
-        {}
         <section className="mb-16">
           <SectionHeader icon={FaRegFileAlt} title="Вимоги до документації" />
           <div className="grid md:grid-cols-2 gap-8">
-            {}
             <div className="p-8 border border-gray-200 rounded-xl hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-6">
                 <FaUser className="text-emerald-600" />
@@ -106,7 +101,6 @@ function UmovRent() {
               </ul>
             </div>
 
-            {}
             <div className="p-8 border border-gray-200 rounded-xl hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-6">
                 <FaBuilding className="text-emerald-600" />
@@ -134,7 +128,6 @@ function UmovRent() {
           </div>
         </section>
 
-        {}
         <section className="mb-16">
           <SectionHeader icon={FaShieldAlt} title="Відповідальність та страхування" />
           <div className="bg-emerald-50 p-8 rounded-xl border border-emerald-100">
@@ -158,7 +151,6 @@ function UmovRent() {
           </div>
         </section>
 
-        {}
         <div className="text-center pt-10 border-t border-gray-100">
           <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center justify-center gap-3">
             Готові до співпраці?

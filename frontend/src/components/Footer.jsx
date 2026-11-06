@@ -13,21 +13,19 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-8 md:mb-12 text-center md:text-left">
           
-          {}
           <div className="space-y-4 md:space-y-6">
             <h4 className="text-white font-bold uppercase text-xs tracking-widest md:mb-6">Ми в соцмережах</h4>
             <p className="hidden md:block text-sm leading-relaxed text-gray-400">
               Ваш надійний партнер у сфері оренди та продажу спецтехніки. Надаємо якісні рішення для будівництва, сільського господарства та промисловості.
             </p>
             <div className="flex justify-center md:justify-start gap-6 md:gap-4">
-              <a href="#" className="hover:text-white transition-colors"><FaFacebook size={20} /></a>
-              <a href="#" className="hover:text-white transition-colors"><FaInstagram size={20} /></a>
-              <a href="#" className="hover:text-white transition-colors"><FaTiktok size={20} /></a>
-              <a href="#" className="hover:text-white transition-colors"><FaLinkedin size={20} /></a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaFacebook size={20} /></a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaInstagram size={20} /></a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaTiktok size={20} /></a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors"><FaLinkedin size={20} /></a>
             </div>
           </div>
 
-          {}
           <div>
             <h4 className="text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest">Навігація</h4>
             <ul className="flex flex-wrap justify-center md:block md:space-y-4 gap-x-4 gap-y-2 text-sm">
@@ -38,17 +36,15 @@ function Footer() {
             </ul>
           </div>
 
-          {}
           <div className="hidden md:block">
             <h4 className="text-white font-bold mb-6 uppercase text-xs tracking-widest">Підтримка</h4>
             <ul className="space-y-4 text-sm">
-              <li><a href="#" className="hover:text-emerald-400 transition-colors">Часті запитання</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition-colors">Політика конфіденційності</a></li>
-              <li><a href="#" className="hover:text-emerald-400 transition-colors">Умови використання</a></li>
+              <li><Link to="/UmovRent" className="hover:text-emerald-400 transition-colors">Часті запитання</Link></li>
+              <li><Link to="/UmovRent" className="hover:text-emerald-400 transition-colors">Політика конфіденційності</Link></li>
+              <li><Link to="/UmovRent" className="hover:text-emerald-400 transition-colors">Умови використання</Link></li>
             </ul>
           </div>
 
-          {}
           <div className="border-t border-emerald-800 pt-6 md:border-none md:pt-0">
             <h4 className="text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest">Контакти</h4>
             <ul className="space-y-3 md:space-y-4 text-sm">

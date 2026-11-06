@@ -11,7 +11,7 @@ import {
   Legend,
   ArcElement,
 } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { useAuth } from '../context/AuthContext';
 import { FaChartBar, FaUsers, FaEnvelope, FaPhoneAlt, FaCalendarAlt, FaUserShield, FaSearch, FaHistory } from 'react-icons/fa';
 
@@ -30,7 +30,6 @@ ChartJS.register(
 const AdminDashboard = () => {
   const { getAuthHeader, isAuthenticated, user } = useAuth();
   const [activeTab, setActiveTab] = useState('stats'); 
-  const [incomeData, setIncomeData] = useState(null);
   const [monthlyOrdersData, setMonthlyOrdersData] = useState(null);
   const [summary, setSummary] = useState({ activeOrdersTotal: 0, catalogTotal: 0 });
   const [usersList, setUsersList] = useState([]);
@@ -91,24 +90,9 @@ const AdminDashboard = () => {
           throw new Error("Сервер відхилив запит: недостатньо прав (403 Forbidden)");
         }
 
-        const income = await incomeRes.json();
         const monthly = await monthlyRes.json();
         const summaryData = await summaryRes.json();
         const usersData = await usersRes.json();
-
-        if (Array.isArray(income)) {
-          setIncomeData({
-            labels: income.map(d => d.month),
-            datasets: [{
-              label: 'Дохід (грн)',
-              data: income.map(d => d.total),
-              borderColor: 'rgb(16, 185, 129)',
-              backgroundColor: 'rgba(16, 185, 129, 0.2)',
-              fill: true,
-              tension: 0.4
-            }]
-          });
-        }
 
         if (Array.isArray(monthly)) {
           setMonthlyOrdersData({
@@ -146,7 +130,8 @@ const AdminDashboard = () => {
     };
 
     fetchAllData();
-  }, [isAuthenticated, user, getAuthHeader]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user]);
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-gray-100 mb-10">
@@ -169,7 +154,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="animate-fadeIn">
-      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-bold text-emerald-600 uppercase mb-1">Замовлення в користувачів</span>
@@ -186,7 +170,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {}
       <div className="flex gap-4 mb-8 bg-white p-1.5 rounded-xl border border-gray-100 w-fit">
         <button
           onClick={() => setActiveTab('stats')}

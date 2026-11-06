@@ -1,4 +1,24 @@
-const PDFDocument = require('pdfkit');
+const fs = require("fs");
+const PDFDocument = require("pdfkit");
+
+const CANDIDATE_FONTS = [
+  "C:/Windows/Fonts/arial.ttf",
+  "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+  "/usr/share/fonts/TTF/DejaVuSans.ttf",
+];
+
+function applyCyrillicFont(doc) {
+  for (const fontPath of CANDIDATE_FONTS) {
+    if (fs.existsSync(fontPath)) {
+      try {
+        doc.font(fontPath);
+        return;
+      } catch (e) {
+        // Якщо шрифт не підійшов, використовуємо стандартний
+      }
+    }
+  }
+}
 
 /**
  * Генерує офіційний PDF рахунок / договір замовлення
@@ -7,13 +27,15 @@ const PDFDocument = require('pdfkit');
  * @param {Stream} stream - потік для запису (наприклад res)
  */
 function generateOrderInvoicePdf(order, items, stream) {
-  const doc = new PDFDocument({ margin: 50, size: 'A4' });
+  const doc = new PDFDocument({ margin: 50, size: "A4" });
   doc.pipe(stream);
+
+  applyCyrillicFont(doc);
 
   // Заголовок компанії
   doc
     .fontSize(20)
-    .text("Gold Bud Trans", 50, 50, { bold: true })
+    .text("Gold Bud Trans", 50, 50)
     .fontSize(10)
     .text("Оренда та продаж будівельної спецтехніки", 50, 75)
     .text("Україна, м. Київ | Тел: +380 (44) 123-45-67", 50, 90)
@@ -22,10 +44,10 @@ function generateOrderInvoicePdf(order, items, stream) {
   doc.moveTo(50, 125).lineTo(550, 125).strokeColor("#e5e7eb").stroke();
 
   // Номер та дата
-  const formattedDate = new Date(order.created_at || Date.now()).toLocaleDateString('uk-UA');
+  const formattedDate = new Date(order.created_at || Date.now()).toLocaleDateString("uk-UA");
   doc
     .fontSize(16)
-    .text(`РАХУНОК-ДОГОВІР № ${order.order_number || order.id}`, 50, 140, { bold: true })
+    .text(`РАХУНОК-ДОГОВІР № ${order.order_number || order.id}`, 50, 140)
     .fontSize(10)
     .text(`Дата оформлення: ${formattedDate}`, 50, 162);
 
@@ -37,21 +59,18 @@ function generateOrderInvoicePdf(order, items, stream) {
     .text(`ПІБ / Назва: ${order.customer_name}`, 50, 210)
     .text(`Телефон: ${order.customer_phone}`, 50, 225)
     .text(`Email: ${order.customer_email}`, 50, 240)
-    .text(`Адреса доставки / об'єкту: ${order.delivery_address || 'Самовивіз'}`, 50, 255);
+    .text(`Адреса доставки / об'єкту: ${order.delivery_address || "Самовивіз"}`, 50, 255);
 
   // Період оренди
   if (order.start_date && order.end_date) {
-    const sDate = new Date(order.start_date).toLocaleDateString('uk-UA');
-    const eDate = new Date(order.end_date).toLocaleDateString('uk-UA');
+    const sDate = new Date(order.start_date).toLocaleDateString("uk-UA");
+    const eDate = new Date(order.end_date).toLocaleDateString("uk-UA");
     doc.text(`Період оренди: з ${sDate} по ${eDate}`, 50, 270);
   }
 
   // Таблиця товарів
   const tableTop = 300;
-  doc
-    .rect(50, tableTop, 500, 20)
-    .fillColor("#1f2937")
-    .fill();
+  doc.rect(50, tableTop, 500, 20).fillColor("#1f2937").fill();
 
   doc
     .fillColor("#ffffff")
@@ -66,15 +85,15 @@ function generateOrderInvoicePdf(order, items, stream) {
   doc.fillColor("#111827");
 
   (items || []).forEach((item, index) => {
-    const isRent = item.type === 'rent';
+    const isRent = item.type === "rent";
     const typeLabel = isRent ? "Оренда" : "Купівля";
     const countLabel = isRent ? `${item.days_count || 1} дн.` : "1 шт.";
-    const subtotal = Number(item.subtotal || 0).toLocaleString('uk-UA');
+    const subtotal = Number(item.subtotal || 0).toLocaleString("uk-UA");
 
     doc
       .fontSize(9)
       .text(`${index + 1}`, 60, yPosition, { width: 30 })
-      .text(`${item.card_title || 'Спецтехніка'}`, 100, yPosition, { width: 220 })
+      .text(`${item.card_title || "Спецтехніка"}`, 100, yPosition, { width: 220 })
       .text(typeLabel, 330, yPosition, { width: 60 })
       .text(countLabel, 400, yPosition, { width: 60 })
       .text(`${subtotal}`, 470, yPosition, { width: 70 });
@@ -85,8 +104,8 @@ function generateOrderInvoicePdf(order, items, stream) {
 
   // Підсумок
   yPosition += 15;
-  const total = Number(order.total_amount || 0).toLocaleString('uk-UA');
-  const prepay = Number(order.prepayment_amount || 0).toLocaleString('uk-UA');
+  const total = Number(order.total_amount || 0).toLocaleString("uk-UA");
+  const prepay = Number(order.prepayment_amount || 0).toLocaleString("uk-UA");
 
   if (order.coupon_code) {
     doc.fontSize(10).text(`Застосовано промокод: ${order.coupon_code}`, 300, yPosition);
@@ -95,15 +114,20 @@ function generateOrderInvoicePdf(order, items, stream) {
 
   doc
     .fontSize(12)
-    .text(`Загальна сума: ${total} грн`, 300, yPosition, { bold: true })
+    .text(`Загальна сума: ${total} грн`, 300, yPosition)
     .fontSize(10)
     .text(`Передплата: ${prepay} грн (Статус: ${order.status})`, 300, yPosition + 18);
 
   // Підписи
   const signaturesTop = Math.max(yPosition + 70, 650);
   doc
-    .moveTo(50, signaturesTop).lineTo(230, signaturesTop).strokeColor("#9ca3af").stroke()
-    .moveTo(370, signaturesTop).lineTo(550, signaturesTop).stroke()
+    .moveTo(50, signaturesTop)
+    .lineTo(230, signaturesTop)
+    .strokeColor("#9ca3af")
+    .stroke()
+    .moveTo(370, signaturesTop)
+    .lineTo(550, signaturesTop)
+    .stroke()
     .fontSize(9)
     .text("Виконавець: ТОВ «Голд Буд Транс»", 50, signaturesTop + 5)
     .text("Замовник: підпис", 370, signaturesTop + 5);
@@ -112,5 +136,5 @@ function generateOrderInvoicePdf(order, items, stream) {
 }
 
 module.exports = {
-  generateOrderInvoicePdf
+  generateOrderInvoicePdf,
 };

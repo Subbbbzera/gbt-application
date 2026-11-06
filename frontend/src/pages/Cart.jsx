@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { FaTrash, FaCalendarAlt, FaTruck, FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCheckCircle, FaFileAlt, FaCloudUploadAlt } from 'react-icons/fa';
+import { FaTrash, FaCalendarAlt, FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCheckCircle, FaFileAlt, FaCloudUploadAlt } from 'react-icons/fa';
 
 const Cart = () => {
   const { cartItems, removeFromCart, createOrder, validateCoupon } = useCart();
@@ -15,7 +15,7 @@ const Cart = () => {
   const [customerEmail, setCustomerEmail] = useState(user?.email || '');
   const [customerPhone, setCustomerPhone] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [notes, setNotes] = useState('');
+  const [notes] = useState('');
   const [documentFile, setDocumentFile] = useState(null);
 
   const [couponInput, setCouponInput] = useState('');
@@ -55,6 +55,7 @@ const Cart = () => {
       });
       setItemTypes(newTypes);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItems]);
 
   const toggleItemSelection = (id) => {
@@ -234,19 +235,20 @@ const Cart = () => {
                 />
                 
                 {(() => {
-                  let displayImage = null;
-                  const API_URL = process.env.REACT_APP_API_URL || "";
-                  if (item.image) {
-                    try {
-                      const parsed = typeof item.image === 'string' && item.image.startsWith('[') ? JSON.parse(item.image) : item.image;
-                      const imagePath = Array.isArray(parsed) ? parsed[0] : parsed;
-                      if (imagePath) {
-                        displayImage = imagePath.startsWith('http') ? imagePath : `${API_URL}${imagePath}`;
-                      }
-                    } catch (e) {
-                      displayImage = item.image.startsWith('http') ? item.image : `${API_URL}${item.image}`;
-                    }
-                  }
+                  const displayImage = item.image
+                    ? (() => {
+                        try {
+                          const parsed = typeof item.image === 'string' && item.image.startsWith('[') ? JSON.parse(item.image) : item.image;
+                          const imagePath = Array.isArray(parsed) ? parsed[0] : parsed;
+                          if (!imagePath) return null;
+                          return imagePath.startsWith('http') || imagePath.startsWith('/images')
+                            ? imagePath
+                            : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${imagePath}`;
+                        } catch (e) {
+                          return item.image;
+                        }
+                      })()
+                    : null;
 
                   return displayImage && (
                     <img 
@@ -261,7 +263,6 @@ const Cart = () => {
                   <h3 className="text-xl font-bold text-gray-800 mb-1">{item.title}</h3>
                   <p className="text-gray-500 text-sm mb-3">{item.category}</p>
                   
-                  {}
                   <div className="flex justify-center md:justify-start mb-3">
                     <div className="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200 shadow-inner">
                       {(item.sale_type === 'rent' || item.sale_type === 'both') && (

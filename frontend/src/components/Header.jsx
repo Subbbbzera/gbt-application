@@ -29,14 +29,12 @@ function Header() {
     <header className="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)]">
       <div className="max-w-7xl mx-auto flex items-center py-4 px-4 md:px-12">
 
-        {}
         <div className="flex-1 flex justify-start">
           <Link to="/" className="transition duration-300 hover:opacity-80">
             <img src="/images/logo.png" alt="Logo" className='w-12 h-8 object-contain' />
           </Link>
         </div>
 
-        {}
         <nav className="hidden md:flex gap-4 mr-28">
           <Link
               to="/UmovRent"
@@ -71,7 +69,6 @@ function Header() {
               Новини
           </Link>
 
-          {}
           {showAdminLink && (
             <Link
               to="/Admin"
@@ -86,9 +83,7 @@ function Header() {
           )}
         </nav>
 
-        {}
         <div className="hidden md:flex flex-1 gap-4 items-center justify-end">
-          {}
           {isAuthenticated && (
             <Link
               to="/Favorites"
@@ -107,7 +102,6 @@ function Header() {
             </Link>
           )}
 
-          {}
           {isAuthenticated && (
             <Link
               to="/Cart"
@@ -126,7 +120,6 @@ function Header() {
             </Link>
           )}
 
-          {}
           {isAuthenticated && approvedOrdersCount > 0 && (
             <Link
               to="/orders"
@@ -140,7 +133,6 @@ function Header() {
             </Link>
           )}
 
-          {}
           {isAuthenticated ? (
             <div
               className="relative group py-2"
@@ -227,9 +219,7 @@ function Header() {
           )}
         </div>
 
-        {}
         <div className="flex md:hidden items-center gap-3 flex-1 justify-end">
-          {}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             className="p-2 text-emerald-800 rounded-lg hover:bg-emerald-50 transition duration-200"
@@ -240,11 +230,9 @@ function Header() {
         </div>
       </div>
 
-      {}
       {showMobileMenu && (
         <div className="md:hidden bg-white border-t border-gray-100 shadow-lg px-4 pb-6 pt-4 flex flex-col gap-1 animate-fadeIn">
 
-          {}
           <Link
             to="/UmovRent"
             onClick={closeMobileMenu}
@@ -297,7 +285,6 @@ function Header() {
 
           <div className="my-2 border-t border-gray-100" />
 
-          {}
           {isAuthenticated ? (
             <>
               <div className="px-4 py-3 flex items-center gap-3 bg-emerald-50 rounded-xl mb-1">

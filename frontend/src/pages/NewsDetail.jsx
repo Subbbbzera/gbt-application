@@ -97,7 +97,6 @@ function NewsDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {}
       <div className="bg-white border-b-2 border-gray-100 sticky top-[72px] z-40">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -129,12 +128,9 @@ function NewsDetail() {
         </div>
       </div>
 
-      {}
       <article className="max-w-4xl mx-auto px-6 py-12">
         <div className="bg-white rounded-2xl border-2 border-gray-200 overflow-hidden">
-          {}
           <div className="p-8 lg:p-12 border-b-2 border-gray-100">
-            {}
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
               <div className="flex items-center gap-2">
                 <FaCalendarAlt className="text-emerald-600" />
@@ -147,13 +143,11 @@ function NewsDetail() {
               </div>
             </div>
 
-            {}
             <h1 className="text-2xl md:text-3xl lg:text-5xl font-bold text-gray-900 leading-tight text-center md:text-left">
               {post.title}
             </h1>
           </div>
 
-          {}
           <div className="p-6 md:p-8 lg:p-12">
             <div className="prose prose-lg max-w-none">
               {post.text.split('\n').map((paragraph, index) => (
@@ -166,7 +160,6 @@ function NewsDetail() {
             </div>
           </div>
 
-          {}
           <div className="p-8 lg:px-12 bg-gray-50 border-t-2 border-gray-100">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2">
@@ -182,7 +175,6 @@ function NewsDetail() {
           </div>
         </div>
 
-        {}
         <div className="grid md:grid-cols-2 gap-6 mt-8">
           {prevPost && (
             <Link

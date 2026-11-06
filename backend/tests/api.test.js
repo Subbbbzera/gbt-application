@@ -149,6 +149,23 @@ describe('Gold Bud Trans API Integration Tests', () => {
         .send({ username: 'missing_password' });
       expect(res.statusCode).toEqual(400);
     });
+
+    it('POST /auth/register повинен успішно реєструвати нового користувача та хешувати пароль', async () => {
+      const uniqueSuffix = Date.now();
+      const res = await request(app)
+        .post('/auth/register')
+        .send({
+          username: `testuser_${uniqueSuffix}`,
+          email: `test_${uniqueSuffix}@example.com`,
+          password: 'password123'
+        });
+      expect(res.statusCode).toEqual(201);
+      expect(res.body).toHaveProperty('token');
+      expect(res.body.user).toHaveProperty('username', `testuser_${uniqueSuffix}`);
+
+      // Видаляємо тестового користувача після перевірки
+      await db.query('DELETE FROM users WHERE id = ?', [res.body.user.id]);
+    });
   });
 
   describe('Protected Routes (Authentication & RBAC Guard)', () => {
